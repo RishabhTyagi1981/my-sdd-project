@@ -1,10 +1,9 @@
 // src/components/SettingsPanel.js
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
 const SettingsPanel = () => {
-  const { theme, setTheme } = useContext(ThemeContext);
-  const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -13,17 +12,9 @@ const SettingsPanel = () => {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      setTheme(savedTheme);
-      setIsDarkMode(savedTheme === 'dark');
+      toggleTheme(savedTheme);
     }
-  }, []);
-
-  const handleToggle = () => {
-    const newTheme = isDarkMode ? 'light' : 'dark';
-    setTheme(newTheme);
-    setIsDarkMode(newTheme === 'dark');
-    localStorage.setItem('theme', newTheme);
-  };
+  }, [toggleTheme]);
 
   return (
     <div>
@@ -31,8 +22,12 @@ const SettingsPanel = () => {
         Dark Mode
         <input
           type="checkbox"
-          checked={isDarkMode}
-          onChange={handleToggle}
+          checked={theme === 'dark'}
+          onChange={(e) => {
+            const newTheme = e.target.checked ? 'dark' : 'light';
+            toggleTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+          }}
         />
       </label>
     </div>

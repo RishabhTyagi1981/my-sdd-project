@@ -16,54 +16,54 @@ So that I can comfortably use the UI interface in low-light environments.
 1. **Description**: A standard UI toggle switch labeled "Dark Mode" must be visible inside the SettingsPanel.
 2. **Implementation**: 
    - The toggle switch should be added to the `SettingsPanel.js` component.
-   - The switch should be styled appropriately to match the application's design.
+   - The switch should be styled to match the application's design guidelines.
 3. **Validation**: 
-   - Ensure the toggle switch is present in the SettingsPanel.
-   - Verify the switch is labeled "Dark Mode".
+   - The toggle switch should be present in the SettingsPanel when the user navigates to the Settings view.
+   - The switch should be labeled "Dark Mode".
 
-### AC-2: Local Storage Persistence
+### AC-2: Persistent State
 1. **Description**: The toggle state must persist locally (using browser `localStorage`) so refreshing the window doesn't reset the selection.
 2. **Implementation**: 
-   - When the toggle is switched, the new state should be saved to `localStorage`.
+   - When the user toggles the switch, the new state should be saved in `localStorage`.
    - When the application loads, the toggle state should be retrieved from `localStorage` and applied.
 3. **Validation**: 
-   - Switch the toggle and refresh the page.
-   - Ensure the toggle state remains consistent across page reloads.
+   - After toggling the switch and refreshing the page, the toggle state should remain unchanged.
+   - The `localStorage` should contain the correct theme state.
 
 ### AC-3: Dynamic Theme Change
 1. **Description**: Toggling the element must change the document attribute dynamically without requiring a hard page reload.
 2. **Implementation**: 
-   - When the toggle is switched, the `data-theme` attribute on the HTML root element should be updated dynamically.
-   - The UI should reflect the new theme immediately without a page reload.
+   - When the user toggles the switch, the `data-theme` attribute on the HTML root element should be updated dynamically.
+   - The change should be reflected immediately without reloading the page.
 3. **Validation**: 
-   - Switch the toggle and observe the immediate change in the UI.
-   - Ensure no hard page reload occurs during the toggle action.
+   - Toggling the switch should change the `data-theme` attribute on the HTML root element.
+   - The UI should reflect the new theme immediately.
 
 ### AC-4: Automated Test
 1. **Description**: An automated test file (`tests/test_theme.py` or equivalent framework test) must confirm that clicking the toggle triggers the context change.
 2. **Implementation**: 
-   - Write a test case in the `tests/test_theme.py` file (or equivalent test framework).
-   - The test should simulate clicking the toggle and verify that the context changes accordingly.
+   - Write a test case in `tests/test_theme.py` (or equivalent) that simulates toggling the switch.
+   - The test should verify that the context changes correctly when the toggle is clicked.
 3. **Validation**: 
-   - Run the test case.
-   - Ensure the test passes, indicating that the toggle correctly triggers the context change.
+   - The test should pass when the toggle functionality is implemented correctly.
+   - The test should fail if the toggle functionality is not working as expected.
 
 ## Implementation Steps
 1. **Add Toggle Switch**:
    - Open `src/components/SettingsPanel.js`.
-   - Add the toggle switch component and bind it to the state.
-   - Style the toggle switch to match the application's design.
+   - Add the toggle switch component and label.
+   - Ensure the switch is styled appropriately.
 
-2. **Persist State in Local Storage**:
-   - Update the toggle switch's `onChange` handler to save the new state to `localStorage`.
-   - Retrieve the toggle state from `localStorage` when the component mounts and apply it.
+2. **Persist State**:
+   - Modify the toggle switch's `onChange` handler to save the state in `localStorage`.
+   - Retrieve the state from `localStorage` when the component mounts.
 
 3. **Dynamic Theme Change**:
-   - Update the toggle switch's `onChange` handler to dynamically change the `data-theme` attribute on the HTML root element.
-   - Ensure the UI updates immediately without a page reload.
+   - Update the `onChange` handler to dynamically change the `data-theme` attribute.
+   - Ensure the UI updates immediately without reloading.
 
 4. **Automated Test**:
    - Create a new test file `tests/test_theme.py`.
-   - Write a test case to simulate clicking the toggle and verify the context change.
+   - Write a test case that simulates toggling the switch and verifies the context change.
 
-By following these steps, the Dark Mode toggle functionality will be implemented and validated according to the acceptance criteria.
+By following these steps, the Dark Mode toggle functionality will be added to the Settings Panel, ensuring a comfortable user experience in low-light environments.
