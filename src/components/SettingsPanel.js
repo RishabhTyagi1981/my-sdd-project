@@ -1,34 +1,42 @@
-// src/components/DarkModeToggle.js
+// src/components/SettingsPanel.js
 import React, { useContext, useEffect, useState } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
-const DarkModeToggle = () => {
+const SettingsPanel = () => {
   const { theme, setTheme } = useContext(ThemeContext);
   const [isDarkMode, setIsDarkMode] = useState(theme === 'dark');
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  useEffect(() => {
-    setIsDarkMode(theme === 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+      setIsDarkMode(savedTheme === 'dark');
+    }
+  }, []);
+
+  const handleToggle = () => {
+    const newTheme = isDarkMode ? 'light' : 'dark';
+    setTheme(newTheme);
+    setIsDarkMode(newTheme === 'dark');
+    localStorage.setItem('theme', newTheme);
   };
 
   return (
-    <label>
-      <input
-        type="checkbox"
-        checked={isDarkMode}
-        onChange={toggleDarkMode}
-      />
-      Dark Mode
-    </label>
+    <div>
+      <label>
+        Dark Mode
+        <input
+          type="checkbox"
+          checked={isDarkMode}
+          onChange={handleToggle}
+        />
+      </label>
+    </div>
   );
 };
 
-export default DarkModeToggle;
+export default SettingsPanel;

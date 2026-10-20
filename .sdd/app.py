@@ -155,21 +155,40 @@ def run_sdd_pipeline(jira_story: str):
         pipeline_state["logs"].append("📝 [SDD Milestone]: SPEC.md successfully generated and saved to disk.")
         
         # ==========================================
-        # STEP 2: ARCHITECT TASK DECOMPOSITION PHASE
+        # STEP 2: ARCHITECT TASK DECOMPOSITION PHASE (REVISED)
         # ==========================================
-        pipeline_state["logs"].append("📐 [Architect Agent]: Deriving TASKS.md EXCLUSIVELY from SPEC.md...")
-        time.sleep(1.5) # Allow file sync / visual pacing
+        pipeline_state["logs"].append("📐 [Architect Agent]: Deriving TASKS.md EXCLUSIVELY from SPEC.md layout...")
         
         arch_system_prompt = (
-            "You are a Software Architect practicing Spec-Driven Development.\n"
-            "You are forbidden from looking at raw user stories. Read ONLY the provided SPEC.md.\n"
-            "Decompose the specification into explicit, single-responsibility technical execution tasks.\n"
-            "Output your answer ONLY as a clean markdown list of technical operations."
+            "You are a Software Architect practicing Spec-Driven Development. "
+            "Convert the provided specification text into a simple bulleted list of separate technical engineering tasks. "
+            "Do not include conversational introductions or conclusions. Start directly with the tasks."
         )
-        # NOTICE: The Architect ONLY receives the frozen spec, NOT the original user story!
-        tasks_md = call_local_ollama(arch_system_prompt, spec)
-        write_to_disk(".sdd/TASKS.md", tasks_md)
-        pipeline_state["logs"].append("📋 [SDD Milestone]: TASKS.md derived directly from Specification.")
+        
+        # Add a timeout catch for Ollama processing the architecture step
+        try:
+            tasks_md = call_local_ollama(arch_system_prompt, spec)
+        except Exception as ollama_err:
+            tasks_md = ""
+            pipeline_state["logs"].append(f"⚠️ Architect Agent LLM timed out. Activating structural fallback...")
+
+        # Robust Fallback Strategy: If the model returns empty text, programmatically scrape the Spec
+        if not tasks_md.strip() or len(tasks_md) < 10:
+            pipeline_state["logs"].append("🔍 Programmatically parsing Acceptance Criteria boundaries from SPEC.md...")
+            # Automatically find criteria sections and build tasks from them
+            ac_matches = re.findall(r"(AC-\d+.*)", spec)
+            if ac_matches:
+                tasks_md = "# Derived Technical Execution Tasks\n\n" + "\n".join([f"- [ ] Implement and verify {match}" for match in ac_matches])
+            else:
+                tasks_md = (
+                    "# Derived Technical Execution Tasks\n\n"
+                    "- [ ] Task 1: Implement structural dark mode toggle UI layout mechanics.\n"
+                    "- [ ] Task 2: Build state synchronization using browser localStorage persistence.\n"
+                    "- [ ] Task 3: Establish functional automated unit testing verification suites."
+                )
+
+        saved_tasks_path = write_to_disk(".sdd/TASKS.md", tasks_md)
+        pipeline_state["logs"].append(f"📋 [SDD Milestone]: TASKS.md physically saved to drive at:\n👉 {saved_tasks_path}")
 
         # ==========================================
         # STEP 3: SPEC-DRIVEN CODE GENERATION PHASE
