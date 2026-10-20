@@ -55,7 +55,7 @@ def run_sdd_pipeline(jira_story: str):
     """Core autonomous SDD loop sequence with absolute isolated error wrapping blocks."""
     global pipeline_state
     
-    # ----------------------------------------------------
+   # ----------------------------------------------------
     # STEP 1: SPECIFICATION PHASE
     # ----------------------------------------------------
     try:
@@ -66,27 +66,26 @@ def run_sdd_pipeline(jira_story: str):
         spec = call_local_ollama(ba_system_prompt, jira_story)
         
         saved_spec_path = write_to_disk(".sdd/SPEC.md", spec)
-        pipeline_state["logs"].append(f"📝 [SDD Milestone]: SPEC.md saved to drive at: {saved_spec_path}")
+        pipeline_state["logs"].append(f"📝 [BA Agent]: SPEC.md physically written to disk.")
     except Exception as e:
         pipeline_state["logs"].append(f"🚨 Phase 1 (BA) Error: {str(e)}")
         spec = "# Fallback Specification Baseline\nAC-1: Implement Toggle UI component\nAC-2: Handle local storage sync"
         write_to_disk(".sdd/SPEC.md", spec)
 
     # ----------------------------------------------------
-    # STEP 2: ARCHITECT TASK DECOMPOSITION PHASE
+    # 📐 STEP 2: ARCHITECT TASK DECOMPOSITION PHASE (MAKE SURE THIS IS PRESENT)
     # ----------------------------------------------------
     try:
         pipeline_state["logs"].append("📐 [Architect Agent]: Deriving TASKS.md EXCLUSIVELY from SPEC.md layout...")
         arch_system_prompt = "You are a Software Architect practicing Spec-Driven Development. Convert this specification into a simple markdown list of technical operations. Start directly with bullets."
         
-        # Isolated network block call to prevent total thread dropouts
         try:
             tasks_md = call_local_ollama(arch_system_prompt, spec)
         except Exception as inner_err:
             pipeline_state["logs"].append(f"⚠️ Architect LLM lagged out: {inner_err}. Deploying fallback list...")
             tasks_md = ""
 
-        # Enforced structure guarantee fallback
+        # Enforced structure guarantee fallback to write the file no matter what
         if not tasks_md.strip() or len(tasks_md) < 10:
             tasks_md = (
                 "# Derived Technical Execution Tasks\n\n"
@@ -96,7 +95,7 @@ def run_sdd_pipeline(jira_story: str):
             )
 
         saved_tasks_path = write_to_disk(".sdd/TASKS.md", tasks_md)
-        pipeline_state["logs"].append(f"📋 [SDD Milestone]: TASKS.md saved to drive at: {saved_tasks_path}")
+        pipeline_state["logs"].append(f"📋 [Architect Agent]: TASKS.md physically written to disk.")
     except Exception as e:
         pipeline_state["logs"].append(f"🚨 Phase 2 (Architect) Critical Error: {str(e)}")
 
@@ -105,8 +104,8 @@ def run_sdd_pipeline(jira_story: str):
     # ----------------------------------------------------
     try:
         target_file = "src/components/SettingsPanel.js"
-        pipeline_state["logs"].append(f"🛠️ [Engineer Agent]: Constructing spec-compliant source for {target_file}...")
-        
+        pipeline_state["logs"].append(f"🛠️ [Engineer Agent]: Writing code modules for {target_file}...")
+#        
         eng_system_prompt = "You are a Senior Full-Stack Engineer working in an SDD pipeline. Write a React or Vanilla JS dark mode toggle component. Return ONLY executable raw code blocks."
         engineering_context = f"--- BASELINE SPECIFICATION ---\n{spec}\n\n--- TASK ---\nImplement component file: {target_file}"
         
