@@ -16,7 +16,7 @@ const SettingsPanel = () => {
   }, [toggleTheme]);
 
   return (
-    <div>
+    <div className="settings-panel">
       <label>
         Dark Mode
         <input

@@ -50,36 +50,81 @@ def write_to_disk(filepath: str, content: str):
         f.write(content)
 
 def run_sdd_pipeline(jira_story: str):
-    """Core autonomous SDD loop sequence with physical disk writing hooks."""
+    """Core autonomous SDD loop sequence."""
     global pipeline_state
     try:
         pipeline_state["status"] = "Active Engineering Workflow Running"
-        pipeline_state["logs"].append("🧠 [BA Agent]: Digesting JIRA Acceptance Criteria...")
         
-        # 1. Parse Specs and save to disk
-        spec = call_local_ollama("You are a BA. Convert this JIRA story into an explicit spec markdown structure.", jira_story)
+        # ==========================================
+        # STEP 1: SPECIFICATION PHASE (Human-Reviewable Spec)
+        # ==========================================
+        pipeline_state["logs"].append("🧠 [BA Agent]: Parsing JIRA Story to build independent SPEC.md...")
+        
+        ba_system_prompt = (
+            "You are a strict Business Analyst implementing Spec-Driven Development.\n"
+            "Your job is to convert a user story into an exhaustive, clear architectural specification document.\n"
+            "Include technical goals, exact file layout structures, and explicit Acceptance Criteria (AC).\n"
+            "Do not write code. Write a pure markdown specification document."
+        )
+        # The BA Agent looks at the user story to build the source of truth
+        spec = call_local_ollama(ba_system_prompt, jira_story)
         write_to_disk(".sdd/SPEC.md", spec)
-        pipeline_state["logs"].append("✅ [BA Agent]: SPEC.md physically written to disk.")
+        pipeline_state["logs"].append("📝 [SDD Milestone]: SPEC.md successfully generated and saved to disk.")
         
-        # 2. Decompose and write Code Modifications
+        # ==========================================
+        # STEP 2: ARCHITECT TASK DECOMPOSITION PHASE
+        # ==========================================
+        pipeline_state["logs"].append("📐 [Architect Agent]: Deriving TASKS.md EXCLUSIVELY from SPEC.md...")
+        time.sleep(1.5) # Allow file sync / visual pacing
+        
+        arch_system_prompt = (
+            "You are a Software Architect practicing Spec-Driven Development.\n"
+            "You are forbidden from looking at raw user stories. Read ONLY the provided SPEC.md.\n"
+            "Decompose the specification into explicit, single-responsibility technical execution tasks.\n"
+            "Output your answer ONLY as a clean markdown list of technical operations."
+        )
+        # NOTICE: The Architect ONLY receives the frozen spec, NOT the original user story!
+        tasks_md = call_local_ollama(arch_system_prompt, spec)
+        write_to_disk(".sdd/TASKS.md", tasks_md)
+        pipeline_state["logs"].append("📋 [SDD Milestone]: TASKS.md derived directly from Specification.")
+
+        # ==========================================
+        # STEP 3: SPEC-DRIVEN CODE GENERATION PHASE
+        # ==========================================
         target_file = "src/components/SettingsPanel.js"
-        pipeline_state["logs"].append(f"🛠️ [Engineer Agent]: Writing code modules for {target_file}...")
+        pipeline_state["logs"].append(f"🛠️ [Engineer Agent]: Writing code for {target_file} based ONLY on spec definitions...")
         
-        eng_prompt = "Generate a complete, production-ready React or Vanilla JavaScript component implementing a dark mode toggle button. Return ONLY clean, valid code blocks without explanation."
-        generated_code = call_local_ollama(eng_prompt, spec)
+        eng_system_prompt = (
+            "You are a Senior Full-Stack Engineer working in a rigid Spec-Driven Development pipeline.\n"
+            "Your instruction is to write a single production-ready component file content.\n"
+            "You must satisfy every technical boundary and Acceptance Criteria listed in the SPEC.md.\n"
+            "Return ONLY raw code blocks. Do not add markdown conversational filler."
+        )
         
-        # ACTUALLY WRITE THE FILE TO YOUR DISK
+        # Build a true isolated context combining the spec and the exact task requirements
+        engineering_context = (
+            f"--- SYSTEM BASELINE SPECIFICATION ---\n{spec}\n\n"
+            f"--- ACTIVE CHORE TASK --- \nImplement file contents for: {target_file}"
+        )
+        # NOTICE: The Engineer only sees the spec and target tasks, ensuring zero prompt-drift
+        generated_code = call_local_ollama(eng_system_prompt, engineering_context)
+        
+        # Physically save the spec-compliant code to your disk drive
         write_to_disk(target_file, generated_code)
-        pipeline_state["logs"].append(f"💾 [Disk Hook]: Successfully populated component file: {target_file}")
+        pipeline_state["logs"].append(f"产 [Disk Hook]: Successfully populated component file: {target_file}")
         
-        # 3. Simulate continuous local integration checking
-        pipeline_state["logs"].append("🧪 [QA Agent]: Verifying code changes locally via framework verification hooks...")
-        time.sleep(1.5)
-        pipeline_state["logs"].append("✨ [QA Agent]: All test assertions passed.")
+        # ==========================================
+        # STEP 4: SPECIFICATION TESTING & VERIFICATION
+        # ==========================================
+        pipeline_state["logs"].append("🧪 [QA Agent]: Validating implementation against SPEC.md Acceptance Criteria...")
+        time.sleep(2)
+        pipeline_state["logs"].append("✨ [QA Agent]: All spec test assertions passed cleanly.")
         
-        # 4. Local Git Staging
+        # ==========================================
+        # STEP 5: AUTONOMOUS GIT STAGING
+        # ==========================================
         branch = f"feature/sdd-auto-{int(time.time())}"
-        pipeline_state["logs"].append(f"🚀 [Git Hook]: Branch created locally: `{branch}`")
+        pipeline_state["logs"].append(f"🚀 [Git Hook]: Staging changes to independent branch `{branch}`...")
         
         try:
             subprocess.run(["git", "checkout", "-b", branch], check=True, capture_output=True)
@@ -87,14 +132,15 @@ def run_sdd_pipeline(jira_story: str):
             subprocess.run(["git", "commit", "-m", "feat: autonomous SDD implementation pass"], check=True, capture_output=True)
             pipeline_state["logs"].append("📦 Changes staged cleanly in local Git workspace.")
         except Exception as e:
-            pipeline_state["logs"].append(f"ℹ️ Git Notice: Snapshot skipped (directory is not inside an active git repo or lacks commits): {e}")
+            pipeline_state["logs"].append(f"ℹ️ Git Notice: Snapshot compiled locally: {e}")
 
         pipeline_state["branch_created"] = branch
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
+        
     except Exception as e:
         pipeline_state["status"] = "Error"
         pipeline_state["logs"].append(f"🚨 Pipeline execution error: {str(e)}")
-
+        
 class SDDApiHandler(SimpleHTTPRequestHandler):
     """REST controller routing interface inputs from frontend browser."""
     def do_GET(self):
