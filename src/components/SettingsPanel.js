@@ -17,7 +17,6 @@ const SettingsPanel = () => {
 
   return (
     <div>
-      <h2>Settings</h2>
       <label>
         Dark Mode
         <input
