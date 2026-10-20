@@ -11,6 +11,7 @@
         button:disabled { background: #29292e; color: #7c7c8a; cursor: not-allowed; }
         .console { background: #09090a; border: 1px solid #323238; font-family: monospace; padding: 15px; height: 320px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
         .badge { display: inline-block; padding: 6px 12px; background: #29292e; border-radius: 4px; font-weight: bold; }
+        .success-banner { background: #1b2d24; border: 1px solid #00b37e; padding: 15px; border-radius: 6px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -25,9 +26,11 @@
             
             <h3 style="margin-top: 40px;">⚙️ System Status Indicator</h3>
             <div id="status" class="badge">Idle</div>
-            <div id="approvalZone" style="display:none; margin-top: 20px; background: #202024; padding: 20px; border-radius: 6px;">
-                <p style="color: #00b37e; font-weight: bold;">🎉 Code execution completed and verified!</p>
-                <button style="background: #22d3ee;" onclick="approveMerge()">👍 Click to Approve & Auto-Merge Branch</button>
+            
+            <!-- Fixed and modernized approval target block container -->
+            <div id="approvalZone" style="display:none;" class="success-banner">
+                <p style="color: #00b37e; font-weight: bold; margin-top: 0;">🎉 Code execution completed and verified!</p>
+                <button style="background: #22d3ee; color: #121214;" onclick="approveMerge()">👍 Click to Approve & Auto-Merge Branch</button>
             </div>
         </div>
         
@@ -45,26 +48,47 @@
                     document.getElementById('status').innerText = data.status;
                     document.getElementById('console').innerText = data.logs.join('\n');
                     
-                    // Keep terminal automatically scrolled to newest messages
                     const el = document.getElementById('console');
                     el.scrollTop = el.scrollHeight;
 
-                    // Toggle controls based on status
+                    // Enable/Disable input triggers dynamically
                     document.getElementById('startBtn').disabled = (data.status === "Active Engineering Workflow Running");
-                    document.getElementById('approvalZone').style.display = (data.status === "Awaiting Human Pull Request Approval") ? 'block' : 'none';
-                });
+                    
+                    // Explicit status checks matching the backend state machine exactly
+                    if (data.status === "Awaiting Human Pull Request Approval") {
+                        document.getElementById('approvalZone').style.display = 'block';
+                    } else {
+                        document.getElementById('approvalZone').style.display = 'none';
+                    }
+                })
+                .catch(err => console.error("Polling error:", err));
         }
 
         function startPipeline() {
             const txt = document.getElementById('story').value;
-            fetch('/api/start', { method: 'POST', body: JSON.stringify({ story: txt }) });
+            if (!txt.trim()) return alert("Please enter a user story description.");
+            
+            fetch('/api/start', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ story: txt }) 
+            });
         }
 
         function approveMerge() {
-            fetch('/api/approve', { method: 'POST' });
+            // Fixed payload formatting to notify python routing correctly
+            fetch('/api/approve', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: "approved" })
+            }).then(() => {
+                // Instantly force an interface update tick for responsive confirmation feedback
+                setTimeout(updateUI, 500);
+            });
         }
 
-        // Poll engine state every 1 second continuously (Runs flawlessly when browser tab is inactive/backgrounded)
+        // Run UI check updates immediately on launch, then poll every second
+        updateUI();
         setInterval(updateUI, 1000);
     </script>
 </body>
