@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autonomous SDD Cockpit Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121214; color: #e1e1e6; margin: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        textarea { width: 100%; height: 200px; background: #202024; border: 1px solid #323238; color: #fff; padding: 12px; border-radius: 6px; box-sizing: border-box; }
+        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; width: 100%; }
+        button:disabled { background: #29292e; color: #7c7c8a; cursor: not-allowed; }
+        .console { background: #09090a; border: 1px solid #323238; font-family: monospace; padding: 15px; height: 320px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        .badge { display: inline-block; padding: 6px 12px; background: #29292e; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Free Autonomous SDD Workspace Cockpit</h1>
+    <hr style="border: 1px solid #323238; margin-bottom: 30px;">
+    
+    <div class="grid">
+        <div>
+            <h3>📋 Paste Target JIRA User Story Specification Here:</h3>
+            <textarea id="story" placeholder="As a user, I want a dark mode toggle button implemented inside components..."></textarea>
+            <button id="startBtn" onclick="startPipeline()">🚀 Start SDD Execution Loop</button>
+            
+            <h3 style="margin-top: 40px;">⚙️ System Status Indicator</h3>
+            <div id="status" class="badge">Idle</div>
+            <div id="approvalZone" style="display:none; margin-top: 20px; background: #202024; padding: 20px; border-radius: 6px;">
+                <p style="color: #00b37e; font-weight: bold;">🎉 Code execution completed and verified!</p>
+                <button style="background: #22d3ee;" onclick="approveMerge()">👍 Click to Approve & Auto-Merge Branch</button>
+            </div>
+        </div>
+        
+        <div>
+            <h3>📜 Live Background Pipeline Worker Feed</h3>
+            <div id="console" class="console">Loading connection...</div>
+        </div>
+    </div>
+
+    <script>
+        function updateUI() {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('status').innerText = data.status;
+                    document.getElementById('console').innerText = data.logs.join('\n');
+                    
+                    // Keep terminal automatically scrolled to newest messages
+                    const el = document.getElementById('console');
+                    el.scrollTop = el.scrollHeight;
+
+                    // Toggle controls based on status
+                    document.getElementById('startBtn').disabled = (data.status === "Active Engineering Workflow Running");
+                    document.getElementById('approvalZone').style.display = (data.status === "Awaiting Human Pull Request Approval") ? 'block' : 'none';
+                });
+        }
+
+        function startPipeline() {
+            const txt = document.getElementById('story').value;
+            fetch('/api/start', { method: 'POST', body: JSON.stringify({ story: txt }) });
+        }
+
+        function approveMerge() {
+            fetch('/api/approve', { method: 'POST' });
+        }
+
+        // Poll engine state every 1 second continuously (Runs flawlessly when browser tab is inactive/backgrounded)
+        setInterval(updateUI, 1000);
+    </script>
+</body>
+</html>

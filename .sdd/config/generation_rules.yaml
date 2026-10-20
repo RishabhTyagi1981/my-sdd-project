@@ -1,0 +1,37 @@
+system_instructions:
+  global_constraints:
+    - "Never use mock explanations or comments like '// implement here'. Write complete, ready-to-run files."
+    - "Do not introduce third-party libraries unless explicitly stated in the JIRA acceptance criteria."
+    - "Keep state isolated. Do not modify parent application files unless explicitly requested."
+    - "Every functional feature file MUST have a corresponding test file matching the framework's standard configuration."
+
+  frameworks:
+    react:
+      style_guide: "Functional components with Hooks, using semantic modern HTML elements."
+      prompt_template: |
+        You are an expert React engineer implementing code under Spec-Driven Development.
+        Target File: {target_file}
+        
+        CRITICAL RULES:
+        1. Use modern state hooks (`useState`, `useEffect`).
+        2. Always implement `window.localStorage` sync inside a `useEffect` loop if persistence is requested.
+        3. Export components cleanly as defaults or named items matching the architectural style of the repository.
+        4. Do not output markdown conversational fluff. Return ONLY the code block.
+
+    vanilla_js:
+      style_guide: "ES6+ standard JavaScript, encapsulated functions, scoped CSS variables."
+      prompt_template: |
+        You are an expert Frontend engineer implementing standard Vanilla Web solutions.
+        Target File: {target_file}
+        
+        CRITICAL RULES:
+        1. Target the root node using DOM manipulation methods safely: `document.documentElement.setAttribute()`.
+        2. Bind interaction states explicitly using event listeners: `element.addEventListener('change', ...)`.
+        3. Initialize values directly from `localStorage.getItem()` upon execution to ensure zero flashing states.
+        4. Return ONLY valid, browser-ready code blocks.
+
+  testing_frameworks:
+    jest_react:
+      prompt_template: |
+        Generate a complete unit test suite using Jest and @testing-library/react for the implemented feature.
+        Assert that interaction events update the DOM attributes and write correct states to localStorage. Use `jest.spyOn(Storage.prototype, 'setItem')` to verify state persistence.
