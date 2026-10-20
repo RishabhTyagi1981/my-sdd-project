@@ -122,8 +122,20 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             
         elif self.path == '/api/approve':
-            pipeline_state["status"] = "Merging changes"
-            pipeline_state["logs"].append("User input received: 'approved'. Executing code consolidation loop...")
+            # ... (inside your /api/approve POST route handler) ...
+            try:
+                subprocess.run(["git", "checkout", "main"], capture_output=True, check=True)
+                subprocess.run(["git", "merge", pipeline_state["branch_created"]], capture_output=True, check=True)
+                pipeline_state["logs"].append("🔀 Git Branch successfully merged into main branch autonomously!")
+    
+                 # 🚀 ADD THIS LINE BELOW TO PUSH UP TO GITHUB GENERATED RESULTS
+                subprocess.run(["git", "push", "origin", "main"], capture_output=True, check=True)
+                pipeline_state["logs"].append("🌍 [Cloud Push]: Code pushed directly to your remote GitHub repository! 🎉")
+    
+            except Exception as e:
+                pipeline_state["logs"].append(f"ℹ️ Git Push Notice: Could not sync upstream cloud: {e}")
+                pipeline_state["status"] = "Merging changes"
+                pipeline_state["logs"].append("User input received: 'approved'. Executing code consolidation loop...")
             
             # Execute actual local branch consolidation if inside Git environment
             try:
