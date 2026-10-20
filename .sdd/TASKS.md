@@ -1,18 +1,8 @@
-- Create a React Context in `src/context/ThemeContext.js` to manage the global theme state.
-- Implement a function within `ThemeContext.js` to toggle between Dark Mode and Light Mode.
-- Use `localStorage` to persist the theme state across sessions.
-- Create a `SettingsPanel.js` component to contain the UI toggle switch for Dark Mode.
-- Import the `ThemeContext` in `SettingsPanel.js` and use it to access the current theme and toggle function.
-- Render a toggle switch labeled "Dark Mode" in `SettingsPanel.js`.
-- Call the toggle function when the switch is toggled in `SettingsPanel.js`.
-- Update the `data-theme` attribute of the HTML root element dynamically based on the current theme state.
-- Ensure the `data-theme` attribute change is reflected immediately without requiring a hard page reload.
-- Write a test case in `tests/test_theme.py` to simulate toggling the Dark Mode switch.
-- Verify that the `data-theme` attribute on the HTML root element is updated accordingly in the test case.
-- Ensure that the `localStorage` is updated with the new theme state in the test case.
-- Read the theme from `localStorage` and set it as the initial theme on application startup.
-- Label the toggle switch as "Dark Mode" in the UI.
-- Type of the toggle switch should be a checkbox or switch.
-- Initial state of the toggle switch should be read from `localStorage` or default to Light Mode.
-- Ensure the theme toggle does not cause significant performance issues.
-- Verify that the toggle is accessible and usable by all users, including those with disabilities.
+- Implement a Toggle UI component using React or Vue.js
+- Create a state management solution to track the toggle state
+- Integrate the Toggle UI component into the application's user interface
+- Implement a function to handle the toggle state change
+- Store the toggle state in local storage using the `localStorage` API
+- Create a function to retrieve the toggle state from local storage
+- Ensure that the toggle state is synchronized between the UI and local storage
+- Test the Toggle UI component to ensure it functions correctly with local storage synchronization
