@@ -1,0 +1,1 @@
+Fallback artifact from 🔍 Result Verifier Agent due to execution glitch.

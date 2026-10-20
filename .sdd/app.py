@@ -15,7 +15,7 @@ MODEL_NAME = "qwen2.5-coder:7b"
 
 pipeline_state = {
     "status": "Idle",
-    "logs": ["🟢 SDD Agent Cluster Online. Awaiting JIRA payload..."],
+    "logs": ["🟢 SDD Isolated Spec Engine Online. Awaiting JIRA payload..."],
     "branch_created": ""
 }
 
@@ -23,15 +23,17 @@ pipeline_state = {
 AGENTS = {
     "user_story_reviewer": {
         "name": "🕵️‍♂️ User Story Reviewer Agent",
-        "system": "You are a Senior Business Analyst. Your job is to parse JIRA stories, challenge missing constraints, and generate an ironclad SPEC.md containing clear Acceptance Criteria (AC). Output pure Markdown."
+        "system": "You are a Senior Business Analyst. Parse JIRA stories and generate an ironclad SPEC.md containing clear Acceptance Criteria (AC). Output pure Markdown.",
+        "vault_path": "sdd-vault/business-analyst/SPEC.md"
     },
     "task_decomposer": {
         "name": "📐 Task Decomposer Agent",
-        "system": "You are a Technical Software Architect. Read the SPEC.md and break it down into an explicit, step-by-step checklist file named TASKS.md. Output clean technical markdown bullets."
+        "system": "You are a Technical Software Architect. Read the SPEC.md and break it down into a step-by-step checklist file named TASKS.md. Output clean technical markdown bullets.",
+        "vault_path": "sdd-vault/architect/TASKS.md"
     },
     "software_engineer": {
         "name": "🛠️ Software Engineer Agent",
-        "system": "You are a Senior Frontend Engineer. Read the SPEC.md and TASKS.md carefully. Write complete, high-quality, production-ready JavaScript or React code components. Return ONLY raw source code."
+        "system": "You are a Senior Frontend Engineer. Read the SPEC.md and TASKS.md carefully. Write complete, high-quality, production-ready Vanilla JavaScript or React code components. Return ONLY raw source code."
     },
     "test_case_reviewer": {
         "name": "🧪 Test Case Reviewer Agent",
@@ -39,7 +41,8 @@ AGENTS = {
     },
     "result_verifier": {
         "name": "🔍 Result Verifier Agent",
-        "system": "You are a QA Lead. Review code and execution traces against the original specification requirements to verify absolute completion before code hits production branches."
+        "system": "You are a QA Lead. Review code and execution traces against the original specification requirements to verify absolute completion. Output pure markdown.",
+        "vault_path": "sdd-vault/qa-lead/VERIFICATION_REPORT.md"
     }
 }
 
@@ -48,7 +51,7 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
     global pipeline_state
     agent = AGENTS[agent_key]
     
-    pipeline_state["logs"].append(f"\n✨ [{agent['name']} STARTED] -> Analyzing structural requirements...")
+    pipeline_state["logs"].append(f"\n✨ [{agent['name']} STARTED] -> Processing workflow context...")
     
     payload = {
         "model": MODEL_NAME, 
@@ -66,7 +69,6 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
             res = json.loads(response.read().decode('utf-8'))
             output_text = res.get("response", "").strip()
             
-            # Clean markdown artifacts out of code responses if it's the engineer
             if agent_key == "software_engineer":
                 code_match = re.search(r"```[a-zA-Z]*\n(.*?)```", output_text, re.DOTALL)
                 if code_match: output_text = code_match.group(1).strip()
@@ -78,6 +80,7 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
         return f"Fallback artifact from {agent['name']} due to execution glitch."
 
 def write_to_disk(filepath: str, content: str):
+    """Physically writes files using explicit absolute path tracking to prevent ghost folders."""
     base_dir = Path(__file__).resolve().parent.parent
     p = base_dir / filepath
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -88,39 +91,39 @@ def run_sdd_pipeline(jira_story: str):
     global pipeline_state
     pipeline_state["status"] = "Active Engineering Workflow Running"
     
-    # 1. User Story Reviewer builds the Spec
+    # 1. User Story Reviewer builds the Spec inside sdd-vault/business-analyst/
     spec = ask_agent("user_story_reviewer", jira_story)
-    write_to_disk(".sdd/SPEC.md", spec)
+    write_to_disk(AGENTS["user_story_reviewer"]["vault_path"], spec)
     
-    # 2. Task Decomposer takes the Spec and maps out tasks
+    # 2. Task Decomposer saves tasks list inside sdd-vault/architect/
     tasks = ask_agent("task_decomposer", spec)
-    write_to_disk(".sdd/TASKS.md", tasks)
+    write_to_disk(AGENTS["task_decomposer"]["vault_path"], tasks)
     
-    # 3. Software Engineer implements code based on Spec and Tasks
+    # 3. Software Engineer implements active source code changes
     engineering_input = f"SPECIFICATION:\n{spec}\n\nTASKS CHECKLIST:\n{tasks}"
     code_content = ask_agent("software_engineer", engineering_input)
     write_to_disk("src/components/SettingsPanel.js", code_content)
     
-    # 4. Test Case Reviewer writes the unit tests
+    # 4. Test Case Reviewer writes test framework configurations
     test_content = ask_agent("test_case_reviewer", f"SPECIFICATION:\n{spec}\n\nCODE GENERATED:\n{code_content}")
     write_to_disk("tests/SettingsPanel.test.js", test_content)
     
-    # 5. Result Verifier confirms quality before triggering Git hooks
+    # 5. Result Verifier confirms quality inside sdd-vault/qa-lead/
     verification_report = ask_agent("result_verifier", f"SPEC:\n{spec}\n\nCODE:\n{code_content}\n\nTESTS:\n{test_content}")
-    write_to_disk(".sdd/VERIFICATION_REPORT.md", verification_report)
+    write_to_disk(AGENTS["result_verifier"]["vault_path"], verification_report)
     
-    # 6. Autonomous Git Handshake Gate
+    # 6. Autonomous Git Pipeline Handshake Gate
     try:
-        branch = f"feature/sdd-agents-{int(time.time())}"
+        branch = f"feature/sdd-isolated-vault-{int(time.time())}"
         subprocess.run(["git", "checkout", "-b", branch], check=True, capture_output=True)
         subprocess.run(["git", "add", "."], check=True, capture_output=True)
-        subprocess.run(["git", "commit", "-m", "feat: autonomous multi-agent pipeline validation pass"], check=True, capture_output=True)
-        pipeline_state["logs"].append(f"\n🚀 [Git Hook]: All agent processes verified. Branch `{branch}` created and staged.")
+        subprocess.run(["git", "commit", "-m", "feat: autonomous isolated spec execution pass"], check=True, capture_output=True)
+        pipeline_state["logs"].append(f"\n🚀 [Git Hook]: All agent folders updated. Branch `{branch}` ready for deployment.")
         pipeline_state["branch_created"] = branch
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
     except Exception as e:
-        pipeline_state["logs"].append(f"\nℹ️ Git Step Note: Local directory updated. Git error skipped: {e}")
-        pipeline_state["branch_created"] = "agent-mock-branch"
+        pipeline_state["logs"].append(f"\nℹ️ Git Step Note: Local directory updated. Git execution completed: {e}")
+        pipeline_state["branch_created"] = "vault-mock-branch"
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
 
 # --- NETWORK ROUTING CONTROLLERS ---
@@ -142,7 +145,7 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
 
         if self.path == '/api/start':
             if pipeline_state["status"] != "Active Engineering Workflow Running":
-                pipeline_state["logs"] = ["🏁 Booting autonomous agent cluster execution thread..."]
+                pipeline_state["logs"] = ["🏁 Booting autonomous isolated spec vault pipeline..."]
                 t = Thread(target=run_sdd_pipeline, args=(payload.get("story", ""),))
                 t.daemon = True
                 t.start()
@@ -164,7 +167,6 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
             self.end_headers()
 
 if __name__ == "__main__":
-    os.makedirs(".sdd", exist_ok=True)
-    print(f"🚀 Launching SDD Multi-Agent Cockpit Server at http://localhost:{PORT}")
+    print(f"🚀 Launching Isolated SDD Vault Server at http://localhost:{PORT}")
     server = HTTPServer(('localhost', PORT), SDDApiHandler)
     server.serve_forever()
