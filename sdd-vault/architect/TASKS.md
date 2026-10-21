@@ -1,56 +1,44 @@
-# TASKS.md
+# TASKS.md for JIRA-402: Add Dark Mode Toggle to Settings Panel
 
-## JIRA-402: Add Dark Mode Toggle to Settings Panel
+## Overview
+This document outlines the tasks required to implement the Dark Mode toggle feature in the Settings Panel. Each task is broken down into specific steps and technical details.
 
-### Task 1: Add Toggle Switch Component to SettingsPanel
-- **Description:** Add a toggle switch component to `src/components/SettingsPanel.js`.
-- **Implementation Steps:**
+## Tasks
+
+### 1. Create Toggle Switch
+- **Task**: Add a toggle switch component inside the `SettingsPanel.js` file.
+- **Steps**:
   - Import necessary components and hooks.
-  - Create a toggle switch component.
-  - Label the switch "Dark Mode".
-- **Verification:**
-  - Navigate to the Settings view.
-  - Verify that the "Dark Mode" toggle switch is present and functional.
+  - Create a functional component for the toggle switch.
+  - Label the toggle switch "Dark Mode".
+  - Ensure the switch is styled appropriately.
 
-### Task 2: Store Toggle State in localStorage
-- **Description:** Store the toggle state in `localStorage` when the user toggles the switch.
-- **Implementation Steps:**
-  - Add an event listener to the toggle switch.
-  - On toggle, store the state in `localStorage`.
-- **Verification:**
-  - Toggle the "Dark Mode" switch.
-  - Refresh the page.
-  - Verify that the toggle state remains unchanged.
+### 2. State Management
+- **Task**: Use `localStorage` to store the toggle state.
+- **Steps**:
+  - Retrieve the stored state from `localStorage` on component mount.
+  - Set the initial toggle state based on the stored value.
+  - Update `localStorage` whenever the toggle state changes.
 
-### Task 3: Update Document Attribute Dynamically
-- **Description:** Update the `document.documentElement.setAttribute('data-theme', 'dark' | 'light')` when the toggle switch is toggled.
-- **Implementation Steps:**
-  - Add an event listener to the toggle switch.
-  - On toggle, update the `data-theme` attribute.
-- **Verification:**
-  - Toggle the "Dark Mode" switch.
-  - Verify that the `data-theme` attribute on the HTML root element changes dynamically.
-  - Verify that the UI theme updates accordingly without a page reload.
+### 3. Dynamic Attribute Change
+- **Task**: Add an event listener to the toggle switch that updates the `data-theme` attribute on the HTML root element.
+- **Steps**:
+  - Add an `onChange` event handler to the toggle switch.
+  - Update the `data-theme` attribute on the HTML root element based on the toggle state.
+  - Ensure the attribute is set to 'dark' when the toggle is on and 'light' when the toggle is off.
 
-### Task 4: Retrieve Stored State on Component Mount
-- **Description:** Retrieve the stored state on component mount and apply it to the toggle switch.
-- **Implementation Steps:**
-  - Add a useEffect hook to retrieve the stored state.
-  - Apply the retrieved state to the toggle switch.
-- **Verification:**
-  - Toggle the "Dark Mode" switch.
-  - Refresh the page.
-  - Verify that the toggle state remains unchanged.
-
-### Task 5: Write Automated Test for Toggle Functionality
-- **Description:** Write a test case in `tests/test_theme.py` to simulate toggling the "Dark Mode" switch.
-- **Implementation Steps:**
+### 4. Automated Test
+- **Task**: Create a test file (`tests/test_theme.py` or equivalent).
+- **Steps**:
   - Import necessary testing libraries and components.
-  - Write a test case to simulate toggling the switch.
-  - Verify that the context change is triggered and the `data-theme` attribute is updated.
-- **Verification:**
-  - Run the automated test.
-  - Verify that the test passes, confirming that the toggle functionality is working as expected.
+  - Write a test case that simulates toggling the switch.
+  - Verify that the context changes accordingly when the toggle is clicked.
 
-### Conclusion
-This TASKS.md outlines the detailed tasks required to implement the Dark Mode Toggle feature in the Settings Panel. Each task is clearly defined with implementation steps and verification methods to ensure the feature is developed and tested thoroughly.
+## Verification
+- **AC-1**: Inspect the SettingsPanel component to ensure the toggle switch is present and labeled correctly.
+- **AC-2**: Toggle the switch and refresh the window. Ensure the toggle state remains unchanged.
+- **AC-3**: Toggle the switch and check the `data-theme` attribute on the HTML root element. Ensure it changes dynamically.
+- **AC-4**: Run the automated test and ensure it passes, confirming that the context changes when the toggle is clicked.
+
+## Conclusion
+By completing these tasks, the Dark Mode toggle feature will be implemented with the desired functionality and persistence. Each task is designed to ensure that the feature meets the specified requirements and passes the acceptance criteria.

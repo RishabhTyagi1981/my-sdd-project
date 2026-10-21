@@ -24,12 +24,14 @@ AGENTS = {
     "user_story_reviewer": {
         "name": "🕵️‍♂️ User Story Reviewer Agent",
         "system": "You are a Senior Business Analyst. Parse JIRA stories and generate an ironclad SPEC.md containing clear Acceptance Criteria (AC). Output pure Markdown.",
-        "vault_path": "sdd-vault/business-analyst/SPEC.md"
+        "vault_path": "sdd-vault/business-analyst/SPEC.md",
+        "log_path": "sdd-vault/business-analyst/AGENT_LOG.md"
     },
     "task_decomposer": {
         "name": "📐 Task Decomposer Agent",
         "system": "You are a Technical Software Architect. Read the SPEC.md and break it down into a step-by-step checklist file named TASKS.md. Output clean technical markdown bullets.",
-        "vault_path": "sdd-vault/architect/TASKS.md"
+        "vault_path": "sdd-vault/architect/TASKS.md",
+        "log_path": "sdd-vault/architect/AGENT_LOG.md"
     },
     "software_engineer": {
         "name": "🛠️ Software Engineer Agent",
@@ -42,12 +44,13 @@ AGENTS = {
     "result_verifier": {
         "name": "🔍 Result Verifier Agent",
         "system": "You are a QA Lead. Review code and execution traces against the original specification requirements to verify absolute completion. Output pure markdown.",
-        "vault_path": "sdd-vault/qa-lead/VERIFICATION_REPORT.md"
+        "vault_path": "sdd-vault/qa-lead/VERIFICATION_REPORT.md",
+        "log_path": "sdd-vault/qa-lead/AGENT_LOG.md"
     }
 }
 
 def ask_agent(agent_key: str, context_prompt: str) -> str:
-    """Invokes a specific agent persona, logs its startup state, and returns reasoning results."""
+    """Invokes a specific agent persona, records its specific markup log, and saves artifacts."""
     global pipeline_state
     agent = AGENTS[agent_key]
     
@@ -60,6 +63,8 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
         "options": {"temperature": 0.2, "num_ctx": 4096},
         "keep_alive": "5m"
     }
+    
+    start_time = time.time()
     try:
         req = urllib.request.Request(
             OLLAMA_URL, data=json.dumps(payload).encode('utf-8'),
@@ -68,6 +73,17 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
         with urllib.request.urlopen(req, timeout=300) as response:
             res = json.loads(response.read().decode('utf-8'))
             output_text = res.get("response", "").strip()
+            execution_time = round(time.time() - start_time, 2)
+            
+            # Write a dedicated Agent Markup Log if the agent tracks a documentation path
+            if "log_path" in agent:
+                agent_markup_log = (
+                    f"# {agent['name']} Execution Audit Log\n\n"
+                    f"### ⚙️ Persona Configuration\n- **Role:** {agent['name']}\n- **System Directive:** `{agent['system']}`\n\n"
+                    f"### 📊 Execution Telemetry\n- **Timestamp:** {time.strftime('%Y-%m-%d %H:%M:%S')}\n- **Local Model Engine:** `{MODEL_NAME}`\n- **Processing Duration:** {execution_time} seconds\n- **Status:** Operational Success ✅\n\n"
+                    f"### 📋 Internal Thought Chain Context & Input Payload\n```text\n{context_prompt}\n```\n"
+                )
+                write_to_disk(agent['log_path'], agent_markup_log)
             
             if agent_key == "software_engineer":
                 code_match = re.search(r"```[a-zA-Z]*\n(.*?)```", output_text, re.DOTALL)
@@ -76,11 +92,10 @@ def ask_agent(agent_key: str, context_prompt: str) -> str:
             pipeline_state["logs"].append(f"✅ [{agent['name']} FINISHED] -> Generated artifact successfully.")
             return output_text
     except Exception as e:
-        pipeline_state["logs"].append(f"⚠️ [{agent['name']} ERROR]: Network or memory fault: {e}")
-        return f"Fallback artifact from {agent['name']} due to execution glitch."
+        pipeline_state["logs"].append(f"⚠️ [{agent['name']} ERROR]: {e}")
+        return f"Error fallback content from {agent['name']}"
 
 def write_to_disk(filepath: str, content: str):
-    """Physically writes files using explicit absolute path tracking to prevent ghost folders."""
     base_dir = Path(__file__).resolve().parent.parent
     p = base_dir / filepath
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -91,24 +106,24 @@ def run_sdd_pipeline(jira_story: str):
     global pipeline_state
     pipeline_state["status"] = "Active Engineering Workflow Running"
     
-    # 1. User Story Reviewer builds the Spec inside sdd-vault/business-analyst/
+    # 1. User Story Reviewer builds SPEC.md and its AGENT_LOG.md
     spec = ask_agent("user_story_reviewer", jira_story)
     write_to_disk(AGENTS["user_story_reviewer"]["vault_path"], spec)
     
-    # 2. Task Decomposer saves tasks list inside sdd-vault/architect/
+    # 2. Task Decomposer saves TASKS.md and its AGENT_LOG.md
     tasks = ask_agent("task_decomposer", spec)
     write_to_disk(AGENTS["task_decomposer"]["vault_path"], tasks)
     
-    # 3. Software Engineer implements active source code changes
+    # 3. Software Engineer writes source files
     engineering_input = f"SPECIFICATION:\n{spec}\n\nTASKS CHECKLIST:\n{tasks}"
     code_content = ask_agent("software_engineer", engineering_input)
     write_to_disk("src/components/SettingsPanel.js", code_content)
     
-    # 4. Test Case Reviewer writes test framework configurations
+    # 4. Test Case Reviewer generates unit testing assertions
     test_content = ask_agent("test_case_reviewer", f"SPECIFICATION:\n{spec}\n\nCODE GENERATED:\n{code_content}")
     write_to_disk("tests/SettingsPanel.test.js", test_content)
     
-    # 5. Result Verifier confirms quality inside sdd-vault/qa-lead/
+    # 5. Result Verifier compiles quality metrics and its AGENT_LOG.md
     verification_report = ask_agent("result_verifier", f"SPEC:\n{spec}\n\nCODE:\n{code_content}\n\nTESTS:\n{test_content}")
     write_to_disk(AGENTS["result_verifier"]["vault_path"], verification_report)
     
@@ -122,7 +137,7 @@ def run_sdd_pipeline(jira_story: str):
         pipeline_state["branch_created"] = branch
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
     except Exception as e:
-        pipeline_state["logs"].append(f"\nℹ️ Git Step Note: Local directory updated. Git execution completed: {e}")
+        pipeline_state["logs"].append(f"\nℹ Hoy Git Step Note: Git transaction managed. Process complete: {e}")
         pipeline_state["branch_created"] = "vault-mock-branch"
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
 

@@ -13,11 +13,13 @@ const SettingsPanel = () => {
     }
   }, []);
 
-  const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? 'light' : 'dark';
-    setIsDarkMode(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+  useEffect(() => {
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
+  const handleToggle = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   return (
@@ -28,7 +30,7 @@ const SettingsPanel = () => {
         <input
           type="checkbox"
           checked={isDarkMode}
-          onChange={toggleDarkMode}
+          onChange={handleToggle}
         />
       </label>
     </div>
