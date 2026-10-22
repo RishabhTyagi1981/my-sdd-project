@@ -1,40 +1,30 @@
-// src/components/SettingsPanel.js
+// src/components/ToggleSwitch.js
 import React, { useState, useEffect } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
 
-const SettingsPanel = () => {
+const ToggleSwitch = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-      setIsDarkMode(storedTheme === 'dark');
-      document.documentElement.setAttribute('data-theme', storedTheme);
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+      document.documentElement.setAttribute('data-theme', savedTheme);
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  const handleToggle = () => {
-    setIsDarkMode(!isDarkMode);
+  const toggleTheme = () => {
+    const newTheme = isDarkMode ? 'light' : 'dark';
+    setIsDarkMode(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   return (
-    <div className="settings-panel">
-      <h2>Settings</h2>
-      <label>
-        Dark Mode
-        <input
-          type="checkbox"
-          checked={isDarkMode}
-          onChange={handleToggle}
-        />
-      </label>
-    </div>
+    <label className="switch">
+      <input type="checkbox" checked={isDarkMode} onChange={toggleTheme} />
+      <span className="slider round"></span>
+    </label>
   );
 };
 
-export default SettingsPanel;
+export default ToggleSwitch;
