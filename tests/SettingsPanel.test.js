@@ -1,74 +1,83 @@
-To ensure that the implementation satisfies every single AC defined in the spec document, we need to create strict unit test verification blocks. Below is a Python-based test case using a hypothetical testing framework that can be adapted to various testing environments (e.g., Jest, Mocha, etc.).
+To ensure that the implementation of the Dark Mode toggle satisfies every single AC defined in the spec document, we will create strict unit test verification blocks. We will use a testing framework like Jest and React Testing Library to simulate user interactions and verify the behavior of the Dark Mode toggle.
 
-### Automated Test: `tests/test_theme.py`
+### Test File: `tests/test_theme.py`
 
-```python
-import unittest
-from unittest.mock import patch
-from src.components.ToggleSwitch import ToggleSwitch
+```javascript
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import { ThemeContext, ThemeProvider } from '../context/ThemeContext';
+import DarkModeToggle from '../components/DarkModeToggle';
 
-class TestToggleSwitch(unittest.TestCase):
+// Mock the ThemeContext
+const mockThemeContext = {
+  theme: 'light',
+  setTheme: jest.fn(),
+};
 
-    @patch('src.components.ToggleSwitch.document.documentElement.setAttribute')
-    def test_toggle_theme(self, mock_set_attribute):
-        # Initialize the ToggleSwitch component
-        toggle_switch = ToggleSwitch()
+// Mock the ThemeProvider
+const MockThemeProvider = ({ children }) => (
+  <ThemeProvider value={mockThemeContext}>{children}</ThemeProvider>
+);
 
-        # Simulate toggling the theme
-        toggle_switch.toggleTheme()
+describe('DarkModeToggle', () => {
+  beforeEach(() => {
+    // Reset the mock implementation before each test
+    mockThemeContext.setTheme.mockReset();
+  });
 
-        # Verify that the theme is toggled and the attribute is set correctly
-        mock_set_attribute.assert_called_once_with('data-theme', 'dark')
+  it('renders the Dark Mode toggle switch', () => {
+    render(<MockThemeProvider><DarkModeToggle /></MockThemeProvider>);
+    const toggleSwitch = screen.getByLabelText('Dark Mode');
+    expect(toggleSwitch).toBeInTheDocument();
+  });
 
-        # Simulate toggling the theme again
-        toggle_switch.toggleTheme()
+  it('toggles the theme state on click', () => {
+    render(<MockThemeProvider><DarkModeToggle /></MockThemeProvider>);
+    const toggleSwitch = screen.getByLabelText('Dark Mode');
+    fireEvent.click(toggleSwitch);
+    expect(mockThemeContext.setTheme).toHaveBeenCalledWith('dark');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
 
-        # Verify that the theme is toggled back and the attribute is set correctly
-        mock_set_attribute.assert_called_with('data-theme', 'light')
+  it('saves the toggle state to localStorage on click', () => {
+    render(<MockThemeProvider><DarkModeToggle /></MockThemeProvider>);
+    const toggleSwitch = screen.getByLabelText('Dark Mode');
+    fireEvent.click(toggleSwitch);
+    expect(localStorage.getItem('theme')).toBe('dark');
+  });
 
-    @patch('src.components.ToggleSwitch.localStorage.getItem')
-    @patch('src.components.ToggleSwitch.localStorage.setItem')
-    def test_local_storage_persistence(self, mock_set_item, mock_get_item):
-        # Mock the localStorage.getItem to return 'dark'
-        mock_get_item.return_value = 'dark'
+  it('applies the saved toggle state from localStorage', () => {
+    localStorage.setItem('theme', 'dark');
+    render(<MockThemeProvider><DarkModeToggle /></MockThemeProvider>);
+    const toggleSwitch = screen.getByLabelText('Dark Mode');
+    expect(toggleSwitch).toBeChecked();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
 
-        # Initialize the ToggleSwitch component
-        toggle_switch = ToggleSwitch()
-
-        # Verify that the initial theme is set to 'dark'
-        self.assertTrue(toggle_switch.isDarkMode)
-
-        # Simulate toggling the theme
-        toggle_switch.toggleTheme()
-
-        # Verify that the theme is toggled to 'light' and the attribute is set correctly
-        mock_set_item.assert_called_once_with('theme', 'light')
-        mock_set_attribute.assert_called_once_with('data-theme', 'light')
-
-        # Simulate toggling the theme again
-        toggle_switch.toggleTheme()
-
-        # Verify that the theme is toggled back to 'dark' and the attribute is set correctly
-        mock_set_item.assert_called_with('theme', 'dark')
-        mock_set_attribute.assert_called_with('data-theme', 'dark')
-
-if __name__ == '__main__':
-    unittest.main()
+  it('does not reload the page when toggling', () => {
+    render(<MockThemeProvider><DarkModeToggle /></MockThemeProvider>);
+    const toggleSwitch = screen.getByLabelText('Dark Mode');
+    fireEvent.click(toggleSwitch);
+    expect(window.location.reload).not.toHaveBeenCalled();
+  });
+});
 ```
 
-### Explanation:
+### Explanation of Tests
 
-1. **Test Toggle Theme**:
-   - This test case checks if the `toggleTheme` method correctly toggles the theme and updates the `data-theme` attribute on the HTML root element.
-   - It uses a mock to replace the `document.documentElement.setAttribute` method to verify that it is called with the correct arguments.
+1. **renders the Dark Mode toggle switch**:
+   - Verifies that the toggle switch is present in the rendered component.
 
-2. **Test Local Storage Persistence**:
-   - This test case checks if the toggle state is persisted in `localStorage` and correctly applied on component mount.
-   - It uses mocks to replace `localStorage.getItem` and `localStorage.setItem` to verify that the theme state is correctly read and written.
+2. **toggles the theme state on click**:
+   - Simulates a click on the toggle switch and checks if the `setTheme` function from the `ThemeContext` is called with the correct theme value ('dark') and if the `data-theme` attribute of the HTML root element is updated to 'dark'.
 
-### Additional Notes:
-- Ensure that the `ToggleSwitch` component is properly imported and used in the test.
-- Adjust the mock implementations as necessary to fit the specific testing framework and environment you are using.
-- Consider adding more test cases to cover edge cases and ensure comprehensive coverage.
+3. **saves the toggle state to localStorage on click**:
+   - Simulates a click on the toggle switch and checks if the theme state is saved to `localStorage` as 'dark'.
 
-By running these automated tests, you can verify that the implementation satisfies all the acceptance criteria and meets the requirements outlined in the user story.
+4. **applies the saved toggle state from localStorage**:
+   - Sets a theme state in `localStorage` before rendering the component and verifies that the toggle switch is checked and the `data-theme` attribute is set to 'dark'.
+
+5. **does not reload the page when toggling**:
+   - Simulates a click on the toggle switch and checks that the `window.location.reload` function is not called, ensuring that the page does not reload during the toggle process.
+
+These tests ensure that the Dark Mode toggle functionality is implemented correctly, meeting all the acceptance criteria outlined in the spec document.

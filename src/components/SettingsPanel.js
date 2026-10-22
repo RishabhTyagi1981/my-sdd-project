@@ -1,30 +1,35 @@
-// src/components/ToggleSwitch.js
-import React, { useState, useEffect } from 'react';
+// src/components/DarkModeToggle.js
+import React, { useContext, useEffect } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
-const ToggleSwitch = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+const DarkModeToggle = () => {
+  const { theme, setTheme } = useContext(ThemeContext);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      setIsDarkMode(savedTheme === 'dark');
+      setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
-  }, []);
+  }, [setTheme]);
 
-  const toggleTheme = () => {
-    const newTheme = isDarkMode ? 'light' : 'dark';
-    setIsDarkMode(newTheme);
+  const handleToggle = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   return (
-    <label className="switch">
-      <input type="checkbox" checked={isDarkMode} onChange={toggleTheme} />
-      <span className="slider round"></span>
+    <label>
+      <input
+        type="checkbox"
+        checked={theme === 'dark'}
+        onChange={handleToggle}
+      />
+      Dark Mode
     </label>
   );
 };
 
-export default ToggleSwitch;
+export default DarkModeToggle;

@@ -12,6 +12,12 @@ from threading import Thread
 PORT = 8000
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "qwen2.5-coder:7b"
+# =====================================================================
+# 🔑 SECURITY CONFIGURATION - RE-ADDED FOR REMOTE GITHUB HANDSHAKE
+# =====================================================================
+GITHUB_TOKEN = "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"
+REPO_OWNER   = "RishabhTyagi1981"
+REPO_NAME    = "my-sdd-project"
 
 pipeline_state = {
     "status": "Idle",
@@ -137,9 +143,13 @@ def run_sdd_pipeline(jira_story: str):
         pipeline_state["branch_created"] = branch
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
     except Exception as e:
-        pipeline_state["logs"].append(f"\nℹ Hoy Git Step Note: Git transaction managed. Process complete: {e}")
-        pipeline_state["branch_created"] = "vault-mock-branch"
-        pipeline_state["status"] = "Awaiting Human Pull Request Approval"
+        # 🛡️ STRICT GATE: Do not allow the pipeline to pass if GitHub rejects the push
+        pipeline_state["status"] = "Cloud Integration Failed"
+        pipeline_state["logs"].append(f"\n🛑 [Engine Stopped]: Cloud Git push was rejected by GitHub.com.")
+        pipeline_state["logs"].append(f"🔍 Raw Error Trace: {str(e)}")
+        pipeline_state["branch_created"] = ""
+        pipeline_state["pr_url"] = ""
+
 
 # --- NETWORK ROUTING CONTROLLERS ---
 class SDDApiHandler(SimpleHTTPRequestHandler):
