@@ -1,46 +1,53 @@
-```markdown
-# QA Review for JIRA-402: Add Dark Mode Toggle to Settings Panel
+# Verification Check Files
 
-## Overview
-This document outlines the QA review for the JIRA-402 task, which involves adding a Dark Mode toggle to the Settings Panel in the application.
+## Verification Check for AC-1: Dark Mode Toggle Switch
 
-## Review Criteria
-- **AC-1: Dark Mode Toggle Visibility**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Verify that a toggle switch labeled "Dark Mode" is present.
-  - **Expected Result**: The toggle switch is displayed correctly.
-  - **Actual Result**: The toggle switch is displayed correctly.
-  - **Status**: Passed
+### Description
+Ensure that the `SettingsPanel` component includes a toggle switch labeled "Dark Mode".
 
-- **AC-2: Persistence of Toggle State**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Enable Dark Mode and refresh the page.
-    3. Verify that Dark Mode remains enabled.
-  - **Expected Result**: The toggle state is preserved across page refreshes.
-  - **Actual Result**: The toggle state is preserved across page refreshes.
-  - **Status**: Passed
+### Steps to Verify
+1. Open the `SettingsPanel.js` file.
+2. Search for the toggle switch component.
+3. Verify that the toggle switch is present and labeled "Dark Mode".
 
-- **AC-3: Dynamic Theme Change**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Enable Dark Mode and observe the document root element's data attribute.
-    3. Disable Dark Mode and observe the document root element's data attribute.
-  - **Expected Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
-  - **Actual Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
-  - **Status**: Passed
+### Expected Result
+The `SettingsPanel` component should contain a toggle switch with the label "Dark Mode".
 
-- **AC-4: Automated Test**
-  - **Test Steps**:
-    1. Run the automated test for theme toggling.
-    2. Verify that the test passes.
-  - **Expected Result**: The automated test confirms that the toggle triggers the context change correctly.
-  - **Actual Result**: The automated test confirms that the toggle triggers the context change correctly.
-  - **Status**: Passed
+## Verification Check for AC-2: Local Storage Persistence
 
-## Conclusion
-All acceptance criteria have been verified and passed. The Dark Mode toggle functionality is implemented correctly and meets the user's needs. The automated test further validates the functionality during the development and testing phases.
+### Description
+Ensure that the toggle state persists locally using `localStorage`.
 
-**Overall Status**: Passed
-```
+### Steps to Verify
+1. Open the `SettingsPanel.js` file.
+2. Search for the `toggleTheme` function.
+3. Verify that the `localStorage` is updated with the current theme state when the toggle is switched.
+
+### Expected Result
+After toggling the switch and refreshing the page, the theme should remain consistent with the last selected state.
+
+## Verification Check for AC-3: Dynamic Data Attribute Change
+
+### Description
+Ensure that the `data-theme` attribute on the HTML root element changes dynamically without requiring a hard page reload.
+
+### Steps to Verify
+1. Open the `SettingsPanel.js` file.
+2. Search for the `toggleTheme` function.
+3. Verify that the `data-theme` attribute is updated dynamically when the toggle is switched.
+
+### Expected Result
+The `data-theme` attribute should change immediately upon toggling the switch, without reloading the page.
+
+## Verification Check for AC-4: Automated Test for Toggle Functionality
+
+### Description
+Ensure that clicking the toggle triggers the context change.
+
+### Steps to Verify
+1. Open the `tests/test_theme.py` file.
+2. Search for the test that simulates clicking the toggle.
+3. Verify that the test passes, indicating that the toggle functionality is working as expected.
+
+### Expected Result
+The test should pass, indicating that the toggle functionality is working as expected.

@@ -1,61 +1,40 @@
-# TASKS.md for JIRA-402: Add Dark Mode Toggle to Settings Panel
+# TASKS.md
 
-## Step-by-Step Checklist
+## JIRA-402: Add Dark Mode Toggle to Settings Panel
 
-### 1. Update ThemeContext.js
-- **Task**: Modify `src/context/ThemeContext.js` to include a function for toggling the theme.
-- **Steps**:
-  1. Import `useState` and `useEffect` from React.
-  2. Create a `ThemeContext` with a `theme` state and a `toggleTheme` function.
-  3. Use `localStorage` to persist the theme state across sessions.
-  4. Update the `toggleTheme` function to switch between 'dark' and 'light' themes and update `localStorage`.
+### Implementation Tasks
 
-### 2. Implement Dark Mode Toggle in SettingsPanel.js
-- **Task**: Add a Dark Mode toggle switch to `src/components/SettingsPanel.js`.
-- **Steps**:
-  1. Import `useContext` from React.
-  2. Import the `ThemeContext`.
-  3. Use the `toggleTheme` function from the `ThemeContext` to handle the toggle event.
-  4. Render a toggle switch labeled "Dark Mode" that calls the `toggleTheme` function when toggled.
+1. **Create or Update ThemeContext.js**
+   - Ensure that the global state context for theme is stored in `src/context/ThemeContext.js`.
+   - If it doesn't exist, create it with initial state set to 'light'.
 
-### 3. Update HTML Root Element Attribute
-- **Task**: Modify the `toggleTheme` function to update the `data-theme` attribute on the HTML root element.
-- **Steps**:
-  1. In the `toggleTheme` function, update the `data-theme` attribute based on the current theme.
-  2. Ensure that the attribute is set to 'dark' when the theme is dark and 'light' when the theme is light.
+2. **Update SettingsPanel.js**
+   - Add a toggle switch labeled "Dark Mode" inside the `SettingsPanel` component.
+   - Ensure the toggle switch is styled appropriately for a dark mode interface.
 
-### 4. Implement Persistence of Toggle State
-- **Task**: Ensure that the toggle state persists across page refreshes using `localStorage`.
-- **Steps**:
-  1. In the `ThemeContext` initialization, read the theme from `localStorage` if available.
-  2. Update the `toggleTheme` function to save the new theme state to `localStorage`.
+3. **Toggle Theme State**
+   - Implement the logic to switch the theme state between 'dark' and 'light'.
+   - Update the `data-theme` attribute on the HTML root element dynamically.
 
-### 5. Add Automated Test for Theme Toggling
-- **Task**: Create an automated test to verify that clicking the toggle triggers the context change.
-- **Steps**:
-  1. Create a test file, e.g., `tests/test_theme.py`.
-  2. Write a test case that simulates toggling the Dark Mode switch.
-  3. Assert that the `ThemeContext` state and the `data-theme` attribute on the HTML root element are updated correctly.
+4. **Persist Theme State**
+   - When the toggle is switched, update the `localStorage` with the current theme state.
+   - Retrieve the theme state from `localStorage` when the application loads to set the initial theme.
 
-### 6. Review and Refine
-- **Task**: Review the implementation and refine any issues or edge cases.
-- **Steps**:
-  1. Run the automated test to ensure it passes.
-  2. Manually test the Dark Mode toggle in different scenarios (e.g., initial load, page refresh, theme persistence).
-  3. Make any necessary adjustments to the code based on the test results.
+5. **Automated Test**
+   - Write a test file (`tests/test_theme.py` or equivalent) to simulate clicking the toggle.
+   - Verify that the context changes accordingly when the toggle is clicked.
 
-### 7. Documentation
-- **Task**: Document the changes and any new features or behaviors.
-- **Steps**:
-  1. Update the `README.md` or relevant documentation files.
-  2. Include details on how to use the Dark Mode toggle and any limitations or known issues.
+### Verification Tasks
 
-### 8. Code Review and Merge
-- **Task**: Submit the code for review and merge into the main branch.
-- **Steps**:
-  1. Push the changes to the feature branch.
-  2. Create a pull request (PR) and request code review.
-  3. Address any feedback and make necessary revisions.
-  4. Merge the PR into the main branch after approval.
+1. **Check Toggle Switch**
+   - Ensure the toggle switch is present and labeled "Dark Mode" inside the `SettingsPanel`.
 
-By following these steps, the Dark Mode toggle functionality will be implemented correctly and meet the acceptance criteria outlined in the SPEC.md.
+2. **Test Theme Persistence**
+   - After toggling the switch and refreshing the page, verify that the theme remains consistent with the last selected state.
+
+3. **Dynamic Theme Change**
+   - Verify that the `data-theme` attribute changes immediately upon toggling the switch, without reloading the page.
+
+4. **Automated Test Execution**
+   - Run the automated test to ensure that clicking the toggle triggers the context change.
+   - Confirm that the test passes, indicating that the toggle functionality is working as expected.
