@@ -5,17 +5,17 @@
 - **System Directive:** `You are a Technical Software Architect. Read the SPEC.md and break it down into a step-by-step checklist file named TASKS.md. Output clean technical markdown bullets.`
 
 ### 📊 Execution Telemetry
-- **Timestamp:** 2026-10-22 12:46:02
+- **Timestamp:** 2026-10-22 13:13:18
 - **Local Model Engine:** `qwen2.5-coder:7b`
-- **Processing Duration:** 167.01 seconds
+- **Processing Duration:** 194.15 seconds
 - **Status:** Operational Success ✅
 
 ### 📋 Internal Thought Chain Context & Input Payload
 ```text
-# SPEC.md
+# SPEC.md for JIRA-402: Add Dark Mode Toggle to Settings Panel
 
 ## Overview
-This document outlines the requirements and specifications for the JIRA-402 task, which involves adding a Dark Mode toggle to the Settings Panel. The goal is to provide a user-friendly interface that allows users to switch between Dark Mode and Light Mode, ensuring comfortable use in low-light environments.
+This document outlines the requirements and acceptance criteria for the JIRA-402 task, which involves adding a Dark Mode toggle to the Settings Panel in the application.
 
 ## User Story
 As an application user,  
@@ -29,43 +29,36 @@ So that I can comfortably use the UI interface in low-light environments.
 
 ## Acceptance Criteria (AC)
 
-### AC-1: Dark Mode Toggle Switch
-1. **Description**: A standard UI toggle switch labeled "Dark Mode" must be visible inside the SettingsPanel.
-2. **Implementation**: 
-   - The toggle switch should be a checkbox or a button with a label.
-   - The label should clearly indicate the toggle state (e.g., "Dark Mode" when off, "Dark Mode ON" when on).
-3. **Validation**: 
-   - The toggle switch must be present in the SettingsPanel.
-   - The label must accurately reflect the current toggle state.
+### AC-1: Dark Mode Toggle Visibility
+- **Description**: A standard UI toggle switch labeled "Dark Mode" must be visible inside the SettingsPanel.
+- **Test Steps**:
+  1. Navigate to the Settings view.
+  2. Verify that a toggle switch labeled "Dark Mode" is present.
+- **Expected Result**: The toggle switch is displayed correctly.
 
-### AC-2: Persistent Toggle State
-1. **Description**: The toggle state must persist locally (using browser `localStorage`) so refreshing the window doesn't reset the selection.
-2. **Implementation**: 
-   - When the toggle state changes, the new state should be saved to `localStorage`.
-   - When the application loads, the toggle state should be retrieved from `localStorage` and applied.
-3. **Validation**: 
-   - Toggle the state and refresh the page to ensure the state persists.
-   - Verify that the toggle state is correctly applied after refresh.
+### AC-2: Persistence of Toggle State
+- **Description**: The toggle state must persist locally (using browser `localStorage`) so refreshing the window doesn't reset the selection.
+- **Test Steps**:
+  1. Navigate to the Settings view.
+  2. Enable Dark Mode and refresh the page.
+  3. Verify that Dark Mode remains enabled.
+- **Expected Result**: The toggle state is preserved across page refreshes.
 
 ### AC-3: Dynamic Theme Change
-1. **Description**: Toggling the element must change the document attribute dynamically without requiring a hard page reload.
-2. **Implementation**: 
-   - When the toggle is activated, the `data-theme` attribute of the HTML root element should be updated to either 'dark' or 'light'.
-   - The UI should reflect the new theme immediately without a page reload.
-3. **Validation**: 
-   - Toggle the state and observe the immediate change in the UI.
-   - Ensure that no hard page reload occurs during the toggle process.
+- **Description**: Toggling the element must change the document attribute dynamically without requiring a hard page reload.
+- **Test Steps**:
+  1. Navigate to the Settings view.
+  2. Enable Dark Mode and observe the document root element's data attribute.
+  3. Disable Dark Mode and observe the document root element's data attribute.
+- **Expected Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
 
 ### AC-4: Automated Test
-1. **Description**: An automated test file (`tests/test_theme.py` or equivalent framework test) must confirm that clicking the toggle triggers the context change.
-2. **Implementation**: 
-   - Write a test that simulates clicking the toggle switch.
-   - Verify that the `data-theme` attribute of the HTML root element is updated accordingly.
-   - Ensure that the toggle state is saved to `localStorage`.
-3. **Validation**: 
-   - Run the automated test to ensure it passes.
-   - Verify that the test confirms the toggle functionality and persistence.
+- **Description**: An automated test file (`tests/test_theme.py` or equivalent framework test) must confirm that clicking the toggle triggers the context change.
+- **Test Steps**:
+  1. Run the automated test for theme toggling.
+  2. Verify that the test passes.
+- **Expected Result**: The automated test confirms that the toggle triggers the context change correctly.
 
 ## Conclusion
-This SPEC.md provides a comprehensive set of requirements and acceptance criteria for the JIRA-402 task. By following these guidelines, the development team can ensure that the Dark Mode toggle is implemented correctly, providing a user-friendly and accessible interface for all users.
+The above acceptance criteria ensure that the Dark Mode toggle functionality is implemented correctly and meets the user's needs. The automated test will further validate the functionality during the development and testing phases.
 ```

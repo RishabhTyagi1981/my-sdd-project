@@ -1,9 +1,12 @@
-// src/components/DarkModeToggle.js
-import React, { useContext, useEffect } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
+// src/context/ThemeContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const DarkModeToggle = () => {
-  const { theme, setTheme } = useContext(ThemeContext);
+const ThemeContext = createContext();
+
+export const useTheme = () => useContext(ThemeContext);
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -11,25 +14,18 @@ const DarkModeToggle = () => {
       setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
-  }, [setTheme]);
+  }, []);
 
-  const handleToggle = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   return (
-    <label>
-      <input
-        type="checkbox"
-        checked={theme === 'dark'}
-        onChange={handleToggle}
-      />
-      Dark Mode
-    </label>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
   );
 };
-
-export default DarkModeToggle;

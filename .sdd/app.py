@@ -39,13 +39,13 @@ AGENTS = {
         "vault_path": "sdd-vault/architect/TASKS.md",
         "log_path": "sdd-vault/architect/AGENT_LOG.md"
     },
-    "software_engineer": {
+        "software_engineer": {
         "name": "🛠️ Software Engineer Agent",
-        "system": "You are a Senior Frontend Engineer. Read the SPEC.md and TASKS.md carefully. Write complete, high-quality, production-ready Vanilla JavaScript or React code components. Return ONLY raw source code."
+        "system": "Write high-quality React or JS components based on specs. Return ONLY raw code blocks. CRITICAL: Never include realistic-looking token strings, mock keys, or strings starting with 'ghp_' or 'secret' in the code to prevent GitHub Push Protection blocks."
     },
     "test_case_reviewer": {
         "name": "🧪 Test Case Reviewer Agent",
-        "system": "You are an Automated QA Engineer. Create strict unit test verification blocks to assert that the implementation satisfies every single AC defined in the spec document."
+        "system": "Create a complete unit test assertion script block mapping AC tags from the specification. CRITICAL: Never include realistic-looking mock API keys, tokens, passwords, or strings starting with 'ghp_' in the test assertions."
     },
     "result_verifier": {
         "name": "🔍 Result Verifier Agent",
@@ -143,12 +143,24 @@ def run_sdd_pipeline(jira_story: str):
         pipeline_state["branch_created"] = branch
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
     except Exception as e:
-        # 🛡️ STRICT GATE: Do not allow the pipeline to pass if GitHub rejects the push
-        pipeline_state["status"] = "Cloud Integration Failed"
-        pipeline_state["logs"].append(f"\n🛑 [Engine Stopped]: Cloud Git push was rejected by GitHub.com.")
-        pipeline_state["logs"].append(f"🔍 Raw Error Trace: {str(e)}")
+        # 🛡️ STRICT DISALLOW: Freeze pipeline state instantly if GitHub Cloud rejects files
+        pipeline_state["status"] = "Cloud Push Refused"
+        pipeline_state["logs"].append(f"\n🛑 [Engine Halted]: Cloud upload transaction failed to execute on GitHub.com.")
+        
+        # Scrape and output deep network response data if available
+        error_details = getattr(e, "read", lambda: None)()
+        if error_details:
+            try:
+                parsed_err = json.loads(error_details.decode())
+                pipeline_state["logs"].append(f"🔍 GitHub Cloud Error Response: {parsed_err.get('message', 'No message')} - Details: {parsed_err.get('errors', '')}")
+            except:
+                pipeline_state["logs"].append(f"🔍 Raw Connection Trace: {error_details.decode()}")
+        else:
+            pipeline_state["logs"].append(f"🔍 Exception Context: {str(e)}")
+            
         pipeline_state["branch_created"] = ""
         pipeline_state["pr_url"] = ""
+
 
 
 # --- NETWORK ROUTING CONTROLLERS ---
