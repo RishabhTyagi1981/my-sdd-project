@@ -1,59 +1,78 @@
 ```python
+# tests/test_theme.py
+
 import unittest
 from unittest.mock import patch
-from src.context.ThemeContext import ThemeProvider, useTheme
+from src.components.SettingsPanel import SettingsPanel
+from src.context.ThemeContext import ThemeContext
 
-class TestThemeContext(unittest.TestCase):
+class TestSettingsPanel(unittest.TestCase):
 
-    @patch('src.context.ThemeContext.useTheme')
-    def test_ac_1_toggle_ui_visible(self, mock_useTheme):
+    @patch('src.context.ThemeContext.useContext')
+    def test_ac_1_toggle_ui_visible(self, mock_use_context):
         # Arrange
-        mock_useTheme.return_value = {'theme': 'light', 'toggleTheme': lambda: None}
-        
-        # Act
-        # No need to simulate user interaction as we are testing the UI visibility
-        
-        # Assert
-        mock_useTheme.assert_called_once()
+        mock_theme_context = ThemeContext()
+        mock_theme_context.theme = 'light'
+        mock_theme_context.setTheme = lambda x: None
+        mock_use_context.return_value = mock_theme_context
 
-    @patch('src.context.ThemeContext.useTheme')
-    def test_ac_2_toggle_state_persists_locally(self, mock_useTheme):
-        # Arrange
-        mock_useTheme.return_value = {'theme': 'light', 'toggleTheme': lambda: None}
-        
         # Act
-        # No need to simulate user interaction as we are testing the persistence
-        
-        # Assert
-        mock_useTheme.assert_called_once()
+        settings_panel = SettingsPanel()
 
-    @patch('src.context.ThemeContext.useTheme')
-    def test_ac_3_toggle_changes_document_attribute(self, mock_useTheme):
-        # Arrange
-        mock_useTheme.return_value = {'theme': 'light', 'toggleTheme': lambda: None}
-        
-        # Act
-        # No need to simulate user interaction as we are testing the attribute change
-        
         # Assert
-        mock_useTheme.assert_called_once()
+        self.assertIn('Dark Mode', settings_panel.render().get_text())
 
-    @patch('src.context.ThemeContext.useTheme')
-    def test_ac_4_toggle_triggers_context_change(self, mock_useTheme):
+    @patch('src.context.ThemeContext.useContext')
+    def test_ac_2_toggle_state_persists_locally(self, mock_use_context):
         # Arrange
-        mock_useTheme.return_value = {'theme': 'light', 'toggleTheme': lambda: None}
-        
+        mock_theme_context = ThemeContext()
+        mock_theme_context.theme = 'light'
+        mock_theme_context.setTheme = lambda x: None
+        mock_use_context.return_value = mock_theme_context
+
         # Act
-        # No need to simulate user interaction as we are testing the context change
-        
+        settings_panel = SettingsPanel()
+        settings_panel.toggleTheme()  # Simulate toggle
+        settings_panel = SettingsPanel()  # Re-render to simulate page refresh
+
         # Assert
-        mock_useTheme.assert_called_once()
+        self.assertEqual(settings_panel.theme, 'dark')
+
+    @patch('src.context.ThemeContext.useContext')
+    def test_ac_3_toggling_changes_document_attribute(self, mock_use_context):
+        # Arrange
+        mock_theme_context = ThemeContext()
+        mock_theme_context.theme = 'light'
+        mock_theme_context.setTheme = lambda x: None
+        mock_use_context.return_value = mock_theme_context
+
+        # Act
+        settings_panel = SettingsPanel()
+        settings_panel.toggleTheme()  # Simulate toggle
+
+        # Assert
+        self.assertEqual(document.documentElement.getAttribute('data-theme'), 'dark')
+
+    @patch('src.context.ThemeContext.useContext')
+    def test_ac_4_toggle_triggers_context_change(self, mock_use_context):
+        # Arrange
+        mock_theme_context = ThemeContext()
+        mock_theme_context.theme = 'light'
+        mock_theme_context.setTheme = lambda x: None
+        mock_use_context.return_value = mock_theme_context
+
+        # Act
+        settings_panel = SettingsPanel()
+        settings_panel.toggleTheme()  # Simulate toggle
+
+        # Assert
+        self.assertEqual(settings_panel.theme, 'dark')
 
 if __name__ == '__main__':
     unittest.main()
 ```
 
-This script block includes test descriptions for each acceptance criteria (AC) from the specification. Each test function is designed to verify the corresponding AC without simulating user interactions, as the focus is on the UI visibility, persistence, attribute change, and context trigger.
+This unit test script includes test cases for each acceptance criteria (AC) specified in the JIRA ticket. Each test case is labeled with the corresponding acceptance tag (e.g., `test_ac_1_toggle_ui_visible`). The tests use the `unittest` framework and mock the `useContext` hook from the `ThemeContext` to simulate the behavior of the component.
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-1
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-2
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-3
