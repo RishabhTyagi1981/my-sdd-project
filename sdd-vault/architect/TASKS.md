@@ -4,36 +4,71 @@
 
 ### Implementation Tasks
 
-1. **Create Toggle Switch Component**
-   - **Task**: Implement a toggle switch component within the `SettingsPanel` component.
-   - **Implementation**: Ensure the toggle switch is rendered within the `SettingsPanel` component.
-   - **Test**: Verify that the toggle switch is present and labeled correctly.
+1. **Create or Update Theme Context**
+   - Ensure `src/context/ThemeContext.js` exists or create it if it doesn't.
+   - Define the context and provide a way to toggle the theme.
 
-2. **Persist Toggle State Locally**
-   - **Task**: Save the toggle state in `localStorage` when it changes.
-   - **Implementation**: Retrieve the toggle state from `localStorage` when the component mounts.
-   - **Test**: Ensure that toggling the switch and refreshing the page results in the same toggle state.
+2. **Add Dark Mode Toggle to SettingsPanel**
+   - Open `src/components/SettingsPanel.js`.
+   - Add a toggle switch labeled "Dark Mode" inside the `SettingsPanel` component.
+   - Ensure the toggle switch is styled appropriately.
 
-3. **Update Document Attribute Dynamically**
-   - **Task**: Update the `data-theme` attribute on the HTML root element dynamically when the toggle is changed.
-   - **Implementation**: Ensure that the `data-theme` attribute changes correctly when the toggle is toggled.
-   - **Test**: Verify that the `data-theme` attribute changes correctly when the toggle is toggled.
+3. **Update Document Theme Attribute**
+   - In the toggle switch's event handler, update the `data-theme` attribute of the `html` element.
+   - Example:
+     ```javascript
+     document.documentElement.setAttribute('data-theme', 'dark' | 'light');
+     ```
 
-4. **Automated Test for Context Change**
-   - **Task**: Write a test that simulates clicking the toggle and checks if the context changes accordingly.
-   - **Implementation**: Ensure that the test confirms that the context changes when the toggle is clicked.
-   - **Test**: Ensure that the test confirms that the context changes when the toggle is clicked.
+4. **Persist Theme State Locally**
+   - Update the `localStorage` when the toggle state changes.
+   - Example:
+     ```javascript
+     localStorage.setItem('theme', 'dark' | 'light');
+     ```
 
-### Testing Tasks
+5. **Retrieve Theme State on Component Mount**
+   - When the `SettingsPanel` component mounts, retrieve the theme state from `localStorage`.
+   - Example:
+     ```javascript
+     const theme = localStorage.getItem('theme') || 'light';
+     ```
 
-1. **Visual Inspection**
-   - **Task**: Manually verify that the toggle switch is present and labeled correctly.
-   - **Test**: Ensure that toggling the switch and refreshing the page results in the same toggle state.
+6. **Automated Test for Theme Toggle**
+   - Create a test file, e.g., `tests/test_theme.py`.
+   - Write a test case that simulates clicking the toggle and checks if the context changes.
+   - Example (using Jest and React Testing Library):
+     ```javascript
+     import { render, fireEvent, screen } from '@testing-library/react';
+     import { ThemeProvider } from 'src/context/ThemeContext';
+     import SettingsPanel from 'src/components/SettingsPanel';
 
-2. **Dynamic Attribute Change**
-   - **Task**: Manually verify that the `data-theme` attribute changes correctly when the toggle is toggled.
-   - **Test**: Ensure that the test confirms that the context changes when the toggle is clicked.
+     test('toggles theme on button click', () => {
+       render(
+         <ThemeProvider>
+           <SettingsPanel />
+         </ThemeProvider>
+       );
 
-3. **Automated Test Execution**
-   - **Task**: Execute the automated test file (`tests/test_theme.py` or equivalent framework test) to confirm that clicking the toggle triggers the context change.
-   - **Test**: Ensure that the test confirms that the context changes when the toggle is clicked.
+       const toggleSwitch = screen.getByLabelText('Dark Mode');
+       fireEvent.click(toggleSwitch);
+
+       // Add assertions to check if the theme context has changed
+     });
+     ```
+
+### Verification Tasks
+
+1. **Check Toggle Switch Visibility**
+   - Ensure the "Dark Mode" toggle switch is visible inside the `SettingsPanel`.
+
+2. **Verify Theme Persistence**
+   - Toggle the switch and refresh the page.
+   - Ensure the theme remains consistent with the last selected state.
+
+3. **Check Dynamic Theme Change**
+   - Toggle the switch and verify that the `data-theme` attribute of the `html` element changes immediately without reloading the page.
+
+4. **Run Automated Tests**
+   - Execute the test file `tests/test_theme.py`.
+   - Ensure the test passes, indicating that the toggle correctly updates the theme context.
