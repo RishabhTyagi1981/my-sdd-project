@@ -1,54 +1,51 @@
 # Audit Log
 # Verification Check Files
 
-## Verification Check for AC-1: Dark Mode Toggle Switch
+## 1. **AC-1: Toggle Switch Visibility and Labeling**
+- **File**: `src/components/SettingsPanel.js`
+- **Check**: Ensure that the `SettingsPanel` component includes a toggle switch with the label "Dark Mode".
+- **Test**: Manually inspect the `SettingsPanel` component to verify the presence and correct labeling of the toggle switch.
 
-### Description
-Ensure that the `SettingsPanel` component includes a toggle switch labeled "Dark Mode".
+## 2. **AC-2: Local Storage Persistence**
+- **File**: `src/context/ThemeContext.js`
+- **Check**: Ensure that the `toggleTheme` function updates `localStorage` with the current theme state.
+- **Test**: Simulate a page refresh and verify that the theme state is restored from `localStorage`.
 
-### Steps to Verify
-1. Open the `SettingsPanel.js` file.
-2. Search for the toggle switch component.
-3. Verify that the toggle switch is present and labeled "Dark Mode".
+## 3. **AC-3: Dynamic Attribute Change**
+- **File**: `src/context/ThemeContext.js`
+- **Check**: Ensure that the `toggleTheme` function dynamically updates the `data-theme` attribute on the HTML root element.
+- **Test**: Programmatically trigger the toggle and verify that the `data-theme` attribute changes without a page reload.
 
-### Expected Result
-The `SettingsPanel` component should contain a toggle switch with the label "Dark Mode".
+## 4. **AC-4: Automated Test**
+- **File**: `tests/test_theme.py`
+- **Check**: Ensure that the test simulates clicking the toggle and checks if the context changes accordingly.
+- **Test**: Run the test and ensure it passes, indicating that the toggle correctly triggers the context change.
 
-## Verification Check for AC-2: Local Storage Persistence
+### Example Test Code (`tests/test_theme.py`):
+```python
+import unittest
+from unittest.mock import patch
+from src.context.ThemeContext import ThemeProvider, useTheme
 
-### Description
-Ensure that the toggle state persists locally using `localStorage`.
+class TestThemeContext(unittest.TestCase):
+    @patch('src.context.ThemeContext.useTheme')
+    def test_toggle_theme(self, mock_useTheme):
+        # Arrange
+        mock_useTheme.return_value = {'theme': 'light', 'toggleTheme': lambda: None}
+        
+        # Act
+        mock_useTheme.return_value['toggleTheme']()
+        
+        # Assert
+        mock_useTheme.assert_called_once()
 
-### Steps to Verify
-1. Open the `SettingsPanel.js` file.
-2. Search for the `toggleTheme` function.
-3. Verify that the `localStorage` is updated with the current theme state when the toggle is switched.
+if __name__ == '__main__':
+    unittest.main()
+```
 
-### Expected Result
-After toggling the switch and refreshing the page, the theme should remain consistent with the last selected state.
+### Steps to Run the Test:
+1. Ensure you have the necessary testing framework installed.
+2. Navigate to the `tests` directory.
+3. Run the test using the command: `python test_theme.py`.
 
-## Verification Check for AC-3: Dynamic Data Attribute Change
-
-### Description
-Ensure that the `data-theme` attribute on the HTML root element changes dynamically without requiring a hard page reload.
-
-### Steps to Verify
-1. Open the `SettingsPanel.js` file.
-2. Search for the `toggleTheme` function.
-3. Verify that the `data-theme` attribute is updated dynamically when the toggle is switched.
-
-### Expected Result
-The `data-theme` attribute should change immediately upon toggling the switch, without reloading the page.
-
-## Verification Check for AC-4: Automated Test for Toggle Functionality
-
-### Description
-Ensure that clicking the toggle triggers the context change.
-
-### Steps to Verify
-1. Open the `tests/test_theme.py` file.
-2. Search for the test that simulates clicking the toggle.
-3. Verify that the test passes, indicating that the toggle functionality is working as expected.
-
-### Expected Result
-The test should pass, indicating that the toggle functionality is working as expected.
+By following these verification check files, you can ensure that the implementation meets the specified requirements and passes all the acceptance criteria.

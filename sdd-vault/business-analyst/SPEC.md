@@ -15,16 +15,16 @@ So that I can comfortably use the UI interface in low-light environments.
 ### Acceptance Criteria (AC)
 1. **AC-1**: A standard UI toggle switch labeled "Dark Mode" must be visible inside the SettingsPanel.
    - **Implementation**: Ensure that the `SettingsPanel` component includes a toggle switch with the label "Dark Mode".
-   - **Verification**: The toggle switch should be present and labeled correctly.
+   - **Test**: Verify that the toggle switch is present and labeled correctly.
 
 2. **AC-2**: The toggle state must persist locally (using browser `localStorage`) so refreshing the window doesn't reset the selection.
    - **Implementation**: When the toggle is switched, update the `localStorage` with the current theme state.
-   - **Verification**: After toggling the switch and refreshing the page, the theme should remain consistent with the last selected state.
+   - **Test**: Simulate a page refresh and verify that the theme state is restored from `localStorage`.
 
 3. **AC-3**: Toggling the element must change the document attribute dynamically without requiring a hard page reload.
    - **Implementation**: When the toggle is switched, dynamically update the `data-theme` attribute on the HTML root element.
-   - **Verification**: The `data-theme` attribute should change immediately upon toggling the switch, without reloading the page.
+   - **Test**: Programmatically trigger the toggle and verify that the `data-theme` attribute changes without a page reload.
 
 4. **AC-4**: An automated test file (`tests/test_theme.py` or equivalent framework test) must confirm that clicking the toggle triggers the context change.
-   - **Implementation**: Write a test that simulates clicking the toggle and verifies that the context changes accordingly.
-   - **Verification**: The test should pass, indicating that the toggle functionality is working as expected.
+   - **Implementation**: Write a test that simulates clicking the toggle and checks if the context changes accordingly.
+   - **Test**: Run the test and ensure it passes, indicating that the toggle correctly triggers the context change.
