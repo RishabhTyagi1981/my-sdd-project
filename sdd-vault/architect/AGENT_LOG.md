@@ -1,27 +1,24 @@
 # Audit Log
 # TASKS.md
 
-## SDD-1: Update the page title to SDD POC
+## Title
+Update the Page Title to SDD POC
 
-### Description
-The goal of this task is to update the title of the page to "SDD POC" to reflect the purpose and scope of the project.
+## Description
+Update the title of the "index.html" file from "Free Autonomous SDD Workspace Cockpit" to "SDD POC".
 
-### Tasks
+## Tasks
 
-- [ ] Update the page title to "SDD POC".
-- [ ] Ensure the change is reflected immediately upon accessing the page.
-- [ ] Verify the title is visible in the browser tab and in the page source code.
-- [ ] Ensure the update to the page title does not affect any other elements on the page, such as content, layout, or functionality.
-- [ ] Commit the change to the version control system with a descriptive commit message, such as "SDD-1: Update page title to SDD POC".
-- [ ] Include the updated page source code and any necessary configuration files in the commit.
-- [ ] Test the updated page title in multiple browsers and devices to ensure compatibility and consistency.
-- [ ] Verify the title is displayed correctly in all tested environments.
-- [ ] Document the change in the project's documentation, including any relevant screenshots or examples.
-- [ ] Update the documentation to reflect the new page title and any other relevant changes.
-- [ ] Review the updated page title by a peer or supervisor to ensure accuracy and completeness.
-- [ ] Include a check of the page title in multiple environments and devices in the review.
-- [ ] Include a check of the project's documentation to ensure accuracy and completeness in the review.
-- [ ] Deploy the updated page title to the production environment.
-- [ ] Verify the updated page title in the production environment to ensure that it is updated correctly and that the page functions as expected.
-- [ ] Include a check of the page title in multiple browsers and devices in the verification.
-- [ ] Include a check of the project's documentation to ensure accuracy and completeness in the verification.
+- [ ] Open the "index.html" file in a text editor.
+- [ ] Locate the `<title>` tag within the `<head>` section of the file.
+- [ ] Change the text within the `<title>` tag from "Free Autonomous SDD Workspace Cockpit" to "SDD POC".
+- [ ] Save the changes to the "index.html" file.
+- [ ] Test the "index.html" file locally in a web browser to ensure that the displayed title in the browser tab is "SDD POC".
+- [ ] Commit the changes to the version control system with a descriptive commit message, such as "Update page title to SDD POC".
+- [ ] Ensure that the build process succeeds without any errors related to the title change.
+- [ ] Submit the code change for review by at least one other developer.
+- [ ] Once the code change is reviewed and approved, merge it into the main branch.
+
+## Notes
+- Ensure that the change is made in the correct file and not in any other files.
+- The change should be tested locally before committing to the version control system.

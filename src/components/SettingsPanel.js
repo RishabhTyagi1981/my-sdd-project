@@ -1,11 +1,11 @@
-import React from 'react';
-
-const App = () => {
-  return (
-    <div>
-      {/* Your existing page content */}
-    </div>
-  );
-};
-
-export default App;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDD POC</title>
+</head>
+<body>
+    <!-- Your content here -->
+</body>
+</html>
