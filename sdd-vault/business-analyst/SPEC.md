@@ -1,49 +1,43 @@
-# SPEC.md for JIRA-402: Add Dark Mode Toggle to Settings Panel
+# SPEC.md
 
-## Overview
-This document outlines the requirements and acceptance criteria for the JIRA-402 task, which involves adding a Dark Mode toggle to the Settings Panel in the application.
+## SDD-1: Update the page title to SDD POC
 
-## User Story
-As an application user,  
-I want to toggle between Dark Mode and Light Mode on the Settings view,  
-So that I can comfortably use the UI interface in low-light environments.
+### Description
+The goal of this task is to update the title of the page to "SDD POC" to reflect the purpose and scope of the project.
 
-## Technical Context
-- The app's global state context is stored in `src/context/ThemeContext.js`.
-- The toggle widget should be implemented inside the Settings module layout: `src/components/SettingsPanel.js`.
-- It must switch the data attribute on the HTML root element: `document.documentElement.setAttribute('data-theme', 'dark' | 'light')`.
+### Acceptance Criteria
 
-## Acceptance Criteria (AC)
+1. **Title Change**
+   - The page title must be updated to "SDD POC".
+   - The change must be reflected immediately upon accessing the page.
+   - The title should be visible in the browser tab and in the page source code.
 
-### AC-1: Dark Mode Toggle Visibility
-- **Description**: A standard UI toggle switch labeled "Dark Mode" must be visible inside the SettingsPanel.
-- **Test Steps**:
-  1. Navigate to the Settings view.
-  2. Verify that a toggle switch labeled "Dark Mode" is present.
-- **Expected Result**: The toggle switch is displayed correctly.
+2. **No Impact on Other Elements**
+   - The update to the page title should not affect any other elements on the page, such as content, layout, or functionality.
+   - The existing functionality and content of the page should remain unchanged.
 
-### AC-2: Persistence of Toggle State
-- **Description**: The toggle state must persist locally (using browser `localStorage`) so refreshing the window doesn't reset the selection.
-- **Test Steps**:
-  1. Navigate to the Settings view.
-  2. Enable Dark Mode and refresh the page.
-  3. Verify that Dark Mode remains enabled.
-- **Expected Result**: The toggle state is preserved across page refreshes.
+3. **Version Control**
+   - The change must be committed to the version control system with a descriptive commit message, such as "SDD-1: Update page title to SDD POC".
+   - The commit should include the updated page source code and any necessary configuration files.
 
-### AC-3: Dynamic Theme Change
-- **Description**: Toggling the element must change the document attribute dynamically without requiring a hard page reload.
-- **Test Steps**:
-  1. Navigate to the Settings view.
-  2. Enable Dark Mode and observe the document root element's data attribute.
-  3. Disable Dark Mode and observe the document root element's data attribute.
-- **Expected Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
+4. **Testing**
+   - The updated page title must be tested in multiple browsers and devices to ensure compatibility and consistency.
+   - The title should be verified to be displayed correctly in all tested environments.
 
-### AC-4: Automated Test
-- **Description**: An automated test file (`tests/test_theme.py` or equivalent framework test) must confirm that clicking the toggle triggers the context change.
-- **Test Steps**:
-  1. Run the automated test for theme toggling.
-  2. Verify that the test passes.
-- **Expected Result**: The automated test confirms that the toggle triggers the context change correctly.
+5. **Documentation**
+   - The change must be documented in the project's documentation, including any relevant screenshots or examples.
+   - The documentation should be updated to reflect the new page title and any other relevant changes.
 
-## Conclusion
-The above acceptance criteria ensure that the Dark Mode toggle functionality is implemented correctly and meets the user's needs. The automated test will further validate the functionality during the development and testing phases.
+6. **Review**
+   - The updated page title must be reviewed by a peer or supervisor to ensure accuracy and completeness.
+   - The review should include a check of the page title in multiple environments and devices.
+   - The review should also include a check of the project's documentation to ensure accuracy and completeness.
+
+7. **Deployment**
+   - The updated page title must be deployed to the production environment.
+   - The deployment must be verified to ensure that the page title is updated correctly and that the page functions as expected.
+
+8. **Post-Deployment Verification**
+   - The updated page title must be verified in the production environment to ensure that it is updated correctly and that the page functions as expected.
+   - The verification should include a check of the page title in multiple browsers and devices.
+   - The verification should also include a check of the project's documentation to ensure accuracy and completeness.

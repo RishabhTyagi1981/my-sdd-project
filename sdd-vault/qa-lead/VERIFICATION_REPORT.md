@@ -1,46 +1,66 @@
-```markdown
-# QA Review for JIRA-402: Add Dark Mode Toggle to Settings Panel
+# Verification Check Files
 
-## Overview
-This document outlines the QA review for the JIRA-402 task, which involves adding a Dark Mode toggle to the Settings Panel in the application.
+## SDD-1: Update the page title to SDD POC
 
-## Review Criteria
-- **AC-1: Dark Mode Toggle Visibility**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Verify that a toggle switch labeled "Dark Mode" is present.
-  - **Expected Result**: The toggle switch is displayed correctly.
-  - **Actual Result**: The toggle switch is displayed correctly.
-  - **Status**: Passed
+### 1. Title Change
+- **Test Case**: Verify that the page title is updated to "SDD POC".
+- **Steps**:
+  1. Open the page in a web browser.
+  2. Check the browser tab title.
+  3. Check the page source code for the title tag.
+- **Expected Result**: The page title should be "SDD POC".
 
-- **AC-2: Persistence of Toggle State**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Enable Dark Mode and refresh the page.
-    3. Verify that Dark Mode remains enabled.
-  - **Expected Result**: The toggle state is preserved across page refreshes.
-  - **Actual Result**: The toggle state is preserved across page refreshes.
-  - **Status**: Passed
+### 2. No Impact on Other Elements
+- **Test Case**: Verify that the update to the page title does not affect other elements on the page.
+- **Steps**:
+  1. Open the page in a web browser.
+  2. Check the content, layout, and functionality of the page.
+- **Expected Result**: The content, layout, and functionality of the page should remain unchanged.
 
-- **AC-3: Dynamic Theme Change**
-  - **Test Steps**:
-    1. Navigate to the Settings view.
-    2. Enable Dark Mode and observe the document root element's data attribute.
-    3. Disable Dark Mode and observe the document root element's data attribute.
-  - **Expected Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
-  - **Actual Result**: The document root element's data attribute changes dynamically to 'dark' or 'light' without a page reload.
-  - **Status**: Passed
+### 3. Version Control
+- **Test Case**: Verify that the change is committed to the version control system with a descriptive commit message.
+- **Steps**:
+  1. Check the commit history in the version control system.
+  2. Verify that the commit message is "SDD-1: Update page title to SDD POC".
+  3. Verify that the updated page source code and any necessary configuration files are included in the commit.
+- **Expected Result**: The commit should be present with the correct message and updated files.
 
-- **AC-4: Automated Test**
-  - **Test Steps**:
-    1. Run the automated test for theme toggling.
-    2. Verify that the test passes.
-  - **Expected Result**: The automated test confirms that the toggle triggers the context change correctly.
-  - **Actual Result**: The automated test confirms that the toggle triggers the context change correctly.
-  - **Status**: Passed
+### 4. Testing
+- **Test Case**: Verify that the updated page title is tested in multiple browsers and devices.
+- **Steps**:
+  1. Test the page title in multiple browsers (e.g., Chrome, Firefox, Safari, Edge).
+  2. Test the page title in multiple devices (e.g., desktop, tablet, mobile).
+- **Expected Result**: The page title should be displayed correctly in all tested environments.
 
-## Conclusion
-All acceptance criteria have been verified and passed. The Dark Mode toggle functionality is implemented correctly and meets the user's needs. The automated test further validates the functionality during the development and testing phases.
+### 5. Documentation
+- **Test Case**: Verify that the change is documented in the project's documentation.
+- **Steps**:
+  1. Check the project's documentation.
+  2. Verify that the new page title and any other relevant changes are documented.
+  3. Verify that any relevant screenshots or examples are included.
+- **Expected Result**: The documentation should be updated to reflect the new page title and any other relevant changes.
 
-**Overall Status**: Passed
-```
+### 6. Review
+- **Test Case**: Verify that the updated page title is reviewed by a peer or supervisor.
+- **Steps**:
+  1. Check the review comments.
+  2. Verify that the page title is reviewed in multiple environments and devices.
+  3. Verify that the project's documentation is reviewed to ensure accuracy and completeness.
+- **Expected Result**: The review should be complete with no issues.
+
+### 7. Deployment
+- **Test Case**: Verify that the updated page title is deployed to the production environment.
+- **Steps**:
+  1. Check the production environment.
+  2. Verify that the page title is updated correctly.
+  3. Verify that the page functions as expected.
+- **Expected Result**: The page title should be updated correctly and the page should function as expected.
+
+### 8. Post-Deployment Verification
+- **Test Case**: Verify that the updated page title is verified in the production environment.
+- **Steps**:
+  1. Check the production environment.
+  2. Verify that the page title is updated correctly.
+  3. Verify that the page functions as expected.
+  4. Check the project's documentation.
+- **Expected Result**: The page title should be updated correctly, the page should function as expected, and the documentation should be accurate and complete.

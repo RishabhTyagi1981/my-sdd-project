@@ -1,61 +1,26 @@
-# TASKS.md for JIRA-402: Add Dark Mode Toggle to Settings Panel
+# TASKS.md
 
-## Step-by-Step Checklist
+## SDD-1: Update the page title to SDD POC
 
-### 1. Update ThemeContext.js
-- **Task**: Modify `src/context/ThemeContext.js` to include a function for toggling the theme.
-- **Steps**:
-  1. Import `useState` and `useEffect` from React.
-  2. Create a `ThemeContext` with a `theme` state and a `toggleTheme` function.
-  3. Use `localStorage` to persist the theme state across sessions.
-  4. Update the `toggleTheme` function to switch between 'dark' and 'light' themes and update `localStorage`.
+### Description
+The goal of this task is to update the title of the page to "SDD POC" to reflect the purpose and scope of the project.
 
-### 2. Implement Dark Mode Toggle in SettingsPanel.js
-- **Task**: Add a Dark Mode toggle switch to `src/components/SettingsPanel.js`.
-- **Steps**:
-  1. Import `useContext` from React.
-  2. Import the `ThemeContext`.
-  3. Use the `toggleTheme` function from the `ThemeContext` to handle the toggle event.
-  4. Render a toggle switch labeled "Dark Mode" that calls the `toggleTheme` function when toggled.
+### Tasks
 
-### 3. Update HTML Root Element Attribute
-- **Task**: Modify the `toggleTheme` function to update the `data-theme` attribute on the HTML root element.
-- **Steps**:
-  1. In the `toggleTheme` function, update the `data-theme` attribute based on the current theme.
-  2. Ensure that the attribute is set to 'dark' when the theme is dark and 'light' when the theme is light.
-
-### 4. Implement Persistence of Toggle State
-- **Task**: Ensure that the toggle state persists across page refreshes using `localStorage`.
-- **Steps**:
-  1. In the `ThemeContext` initialization, read the theme from `localStorage` if available.
-  2. Update the `toggleTheme` function to save the new theme state to `localStorage`.
-
-### 5. Add Automated Test for Theme Toggling
-- **Task**: Create an automated test to verify that clicking the toggle triggers the context change.
-- **Steps**:
-  1. Create a test file, e.g., `tests/test_theme.py`.
-  2. Write a test case that simulates toggling the Dark Mode switch.
-  3. Assert that the `ThemeContext` state and the `data-theme` attribute on the HTML root element are updated correctly.
-
-### 6. Review and Refine
-- **Task**: Review the implementation and refine any issues or edge cases.
-- **Steps**:
-  1. Run the automated test to ensure it passes.
-  2. Manually test the Dark Mode toggle in different scenarios (e.g., initial load, page refresh, theme persistence).
-  3. Make any necessary adjustments to the code based on the test results.
-
-### 7. Documentation
-- **Task**: Document the changes and any new features or behaviors.
-- **Steps**:
-  1. Update the `README.md` or relevant documentation files.
-  2. Include details on how to use the Dark Mode toggle and any limitations or known issues.
-
-### 8. Code Review and Merge
-- **Task**: Submit the code for review and merge into the main branch.
-- **Steps**:
-  1. Push the changes to the feature branch.
-  2. Create a pull request (PR) and request code review.
-  3. Address any feedback and make necessary revisions.
-  4. Merge the PR into the main branch after approval.
-
-By following these steps, the Dark Mode toggle functionality will be implemented correctly and meet the acceptance criteria outlined in the SPEC.md.
+- [ ] Update the page title to "SDD POC".
+- [ ] Ensure the change is reflected immediately upon accessing the page.
+- [ ] Verify the title is visible in the browser tab and in the page source code.
+- [ ] Ensure the update to the page title does not affect any other elements on the page, such as content, layout, or functionality.
+- [ ] Commit the change to the version control system with a descriptive commit message, such as "SDD-1: Update page title to SDD POC".
+- [ ] Include the updated page source code and any necessary configuration files in the commit.
+- [ ] Test the updated page title in multiple browsers and devices to ensure compatibility and consistency.
+- [ ] Verify the title is displayed correctly in all tested environments.
+- [ ] Document the change in the project's documentation, including any relevant screenshots or examples.
+- [ ] Update the documentation to reflect the new page title and any other relevant changes.
+- [ ] Review the updated page title by a peer or supervisor to ensure accuracy and completeness.
+- [ ] Include a check of the page title in multiple environments and devices in the review.
+- [ ] Include a check of the project's documentation to ensure accuracy and completeness in the review.
+- [ ] Deploy the updated page title to the production environment.
+- [ ] Verify the updated page title in the production environment to ensure that it is updated correctly and that the page functions as expected.
+- [ ] Include a check of the page title in multiple browsers and devices in the verification.
+- [ ] Include a check of the project's documentation to ensure accuracy and completeness in the verification.
