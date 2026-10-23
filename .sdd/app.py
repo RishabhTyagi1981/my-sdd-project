@@ -1,4 +1,4 @@
-import json
+﻿import json
 import urllib.request
 import re
 import sys
@@ -192,13 +192,11 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(pipeline_state).encode('utf-8'))
         else:
             super().do_GET()
-
     def do_POST(self):
         global pipeline_state
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         payload = json.loads(post_data.decode('utf-8'))
-
         if self.path == '/api/start':
             if pipeline_state["status"] != "Active Engineering Workflow Running":
                 pipeline_state["logs"] = ["🏁 Booting autonomous cloud spec vault pipeline..."]
@@ -221,8 +219,7 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
                 pipeline_state["logs"].append(f"ℹ️ Cloud Integration Notice: {error_details}")
                 
             pipeline_state["status"] = "Integrated Successful (Production Ready)"
-            self.send_response(200)
-            self.end_headers()
+            self.send_response(200); self.end_headers()
 
 if __name__ == "__main__":
     os.makedirs(".sdd", exist_ok=True)
