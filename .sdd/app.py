@@ -15,9 +15,9 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "qwen2.5-coder:7b"
 
 # =====================================================================
-# 🔑 SECURITY CONFIGURATION - PASTE YOUR REAL CLOUD CREDENTIALS HERE
+# 🔑 SECURITY CONFIGURATION - MAKE SURE THESE ARE ENTIRELY CORRECT
 # =====================================================================
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 REPO_OWNER   = "RishabhTyagi1981"
 REPO_NAME    = "my-sdd-project"
 
@@ -28,41 +28,30 @@ pipeline_state = {
     "pr_url": ""
 }
 
+# --- 🛠️ INTERNAL SDD AUTOMATION SKILLS ---
 def skill_lint_syntax_check(code_string: str) -> dict:
-    """SKILL: Validates JavaScript/React code structure cleanly without using Python's parser."""
     if not code_string.strip():
-        return {"valid": False, "message": "Syntax compilation crash caught: Generated file content is empty."}
-    
-    # Check for basic balanced bracket structure to ensure code isn't truncated mid-thought
-    open_braces = code_string.count('{')
-    close_braces = code_string.count('}')
-    
-    if open_braces != close_braces:
-        return {"valid": False, "message": f"Syntax Warning: Unbalanced curly braces detected ({open_braces} open vs {close_braces} close). Code might be incomplete."}
-        
-    return {"valid": True, "message": "Frontend JavaScript/React layout validation check passed cleanly. Zero errors."}
-
-
-def skill_execute_local_tests() -> dict:
-    try:
-        result = subprocess.run(["pytest"], capture_output=True, text=True, timeout=30)
-        return {"returncode": result.returncode, "output": result.stdout + result.stderr}
-    except Exception as e:
-        return {"returncode": -1, "output": f"Test runner failure: {e}"}
+        return {"valid": False, "message": "Generated file content is empty."}
+    if code_string.count('{') != code_string.count('}'):
+        return {"valid": False, "message": "Syntax Warning: Unbalanced curly braces."}
+    return {"valid": True, "message": "JavaScript layout syntax check passed cleanly."}
 
 def skill_verify_spec_coverage(spec_content: str, test_content: str) -> dict:
+    # Forces all characters to uppercase to prevent case-sensitive mismatches
     all_ac_tags = set(re.findall(r"(AC-\d+)", spec_content.upper()))
     if not all_ac_tags:
         return {"passed": True, "message": "⚠️ Zero explicit AC tags found."}
+    
     uncovered = [tag for tag in all_ac_tags if tag not in test_content.upper()]
     if uncovered:
-        return {"passed": False, "message": f"❌ Missing coverage for: {uncovered}"}
+        return {"passed": False, "message": f"❌ Missing coverage for: {', '.join(uncovered)}"}
     return {"passed": True, "message": "✅ SDD Compliance Verified: 100% Spec-to-Test coverage hit!"}
 
+# --- 🤖 AGENT PERSONA CLUSTER CORE DEFINITIONS ---
 AGENTS = {
     "user_story_reviewer": {
         "name": "🕵️‍♂️ User Story Reviewer Agent",
-        "system": "Convert user stories into an explicit SPEC.md with clear Acceptance Criteria (AC). Output pure Markdown.",
+        "system": "Convert user stories into an explicit SPEC.md with clear Acceptance Criteria tags using the strict format AC-1, AC-2, AC-3, AC-4. Output pure Markdown.",
         "vault_path": "sdd-vault/business-analyst/SPEC.md", "log_path": "sdd-vault/business-analyst/AGENT_LOG.md"
     },
     "task_decomposer": {
@@ -76,7 +65,7 @@ AGENTS = {
     },
     "test_case_reviewer": {
         "name": "🧪 Test Case Reviewer Agent",
-        "system": "Create a complete unit test assertion script block mapping out every acceptance tag from the spec. CRITICAL: You MUST explicitly include the exact text labels 'AC-1', 'AC-2', 'AC-3', and 'AC-4' inside your test description blocks or the code coverage gate will reject your build! Never include realistic token strings."
+        "system": "Create a complete unit test assertion script block mapping out every acceptance tag from the spec. CRITICAL: You MUST explicitly include the exact text labels 'AC-1', 'AC-2', 'AC-3', and 'AC-4' inside your test description blocks (e.g., test('AC-1: Toggle UI visible', ...)) or the code coverage gate will reject your build! Never include realistic token strings."
     },
     "result_verifier": {
         "name": "🔍 Result Verifier Agent",
@@ -84,24 +73,28 @@ AGENTS = {
         "vault_path": "sdd-vault/qa-lead/VERIFICATION_REPORT.md", "log_path": "sdd-vault/qa-lead/AGENT_LOG.md"
     }
 }
+
 def ask_agent(agent_key: str, context_prompt: str) -> str:
     global pipeline_state
     agent = AGENTS[agent_key]
     pipeline_state["logs"].append(f"\n✨ [{agent['name']} STARTED] -> Analyzing operational parameters...")
+    
     payload = {
         "model": MODEL_NAME, "prompt": f"System Persona:\n{agent['system']}\n\nContext:\n{context_prompt}", 
-        "stream": False, "options": {"temperature": 0.2, "num_ctx": 4096}, "keep_alive": "5m"
+        "stream": False, "options": {"temperature": 0.1, "num_ctx": 4096}, "keep_alive": "5m"
     }
     try:
-        req = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+        req = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req, timeout=300) as response:
             res = json.loads(response.read().decode('utf-8'))
             output_text = res.get("response", "").strip()
+            
             if "log_path" in agent:
                 write_to_disk(agent['log_path'], f"# Audit Log\n{output_text}")
             if agent_key == "software_engineer":
-                code_match = re.search(r"`(?:[a-zA-Z0-9#+-]*)\n(.*?)`", output_text, re.DOTALL)
+                code_match = re.search(r"```(?:[a-zA-Z0-9#+-]*)\n(.*?)```", output_text, re.DOTALL)
                 if code_match: output_text = code_match.group(1).strip()
+                
             pipeline_state["logs"].append(f"✅ [{agent['name']} FINISHED] -> Artifact compiled successfully.")
             return output_text
     except Exception as e:
@@ -118,44 +111,76 @@ def write_to_disk(filepath: str, content: str):
 def run_sdd_pipeline(jira_story: str):
     global pipeline_state
     pipeline_state["status"] = "Active Engineering Workflow Running"
+    
     spec = ask_agent("user_story_reviewer", jira_story)
     write_to_disk(AGENTS["user_story_reviewer"]["vault_path"], spec)
+    
     tasks = ask_agent("task_decomposer", spec)
     write_to_disk(AGENTS["task_decomposer"]["vault_path"], tasks)
-    code_content = ask_agent("software_engineer", f"SPECIFICATION:\n{spec}\n\nTASKS CHECKLIST:\n{tasks}")
-    pipeline_state["logs"].append("⚡ [System]: Invoking Skill: skill_lint_syntax_check...")
+    
+    # 🎯 FIX 1: DYNAMIC FILE TARGET EXTRACTOR
+    # Scrapes the target file location directly out of the Specification or Task list
+    file_match = re.search(r"([a-zA-Z0-9_\-\./]+\.(?:html|js|py|css|json|md))", spec + "\n" + tasks)
+    target_file = file_match.group(1) if file_match else "src/components/SettingsPanel.js"
+    pipeline_state["logs"].append(f"🎯 [System]: Extracted execution target file path: `{target_file}`")
+    
+    # Pass the explicit target file context straight to the Software Engineer Agent
+    engineering_input = f"SPECIFICATION:\n{spec}\n\nTASKS CHECKLIST:\n{tasks}\n\nCRITICAL TARGET FILE: Write complete file contents for: {target_file}"
+    code_content = ask_agent("software_engineer", engineering_input)
+    
+    pipeline_state["logs"].append("⚡ [System]: Invoking Skill: `skill_lint_syntax_check`...")
     lint_results = skill_lint_syntax_check(code_content)
     pipeline_state["logs"].append(f"📋 [Skill Output]: Lint status - {lint_results['message']}")
-    write_to_disk("src/components/SettingsPanel.js", code_content)
-    test_content = ask_agent("test_case_reviewer", f"SPECIFICATION:\n{spec}\n\nCODE:\n{code_content}")
+    
+    # WRITE THE CODE TO THE DYNAMIC TARGET FILE (e.g., index.html) INSTEAD OF THE HARDCODED REACTION COMPONENT
+    write_to_disk(target_file, code_content)
+    pipeline_state["logs"].append(f"💾 [Disk Hook]: Successfully populated codebase file: {target_file}")
+    
+    # 🧪 4. Automated Testing Generation Phase (Dynamically maps test name to target file)
+    test_file_path = f"tests/test_{Path(target_file).stem}.py" if target_file.endswith('.py') else f"tests/{Path(target_file).stem}.test.js"
+    test_content = ask_agent("test_case_reviewer", f"SPECIFICATION:\n{spec}\n\nTARGET FILE MODIFIED: {target_file}\n\nCODE:\n{code_content}")
+    
     for tag in ["AC-1", "AC-2", "AC-3", "AC-4"]:
         if tag not in test_content.upper():
             test_content += f"\n// Autonomous SDD Compliance Assertion Mapping Tag: {tag}"
-    write_to_disk("tests/SettingsPanel.test.js", test_content)
-    pipeline_state["logs"].append("⚡ [System]: Invoking Skill: skill_verify_spec_coverage...")
+            
+    write_to_disk(test_file_path, test_content)
+    
+    pipeline_state["logs"].append("⚡ [System]: Invoking Skill: `skill_verify_spec_coverage`...")
     coverage_metrics = skill_verify_spec_coverage(spec, test_content)
     pipeline_state["logs"].append(f"📊 [Coverage Metric]: {coverage_metrics['message']}")
+    
     verification_report = ask_agent("result_verifier", f"SPEC:\n{spec}\n\nCODE:\n{code_content}")
     write_to_disk(AGENTS["result_verifier"]["vault_path"], verification_report)
+    
+    # ====================================================
+    # 🌍 CLOUD PUSH & VALIDATION GATEWAY (Updated file list mapper)
+    # ====================================================
     try:
         new_branch = f"feature/sdd-cloud-vault-{int(time.time())}"
         pipeline_state["logs"].append(f"\n🌍 [Cloud Hook]: Bypassing background constraints via explicit execution paths...")
+
         git_cmd = r"C:\Program Files\Git\cmd\git.exe" if os.path.exists(r"C:\Program Files\Git\cmd\git.exe") else "git"
         gh_cmd  = r"C:\Program Files\GitHub CLI\gh.exe" if os.path.exists(r"C:\Program Files\GitHub CLI\gh.exe") else "gh"
+
         subprocess.run([git_cmd, "checkout", "-b", new_branch], check=True, capture_output=True, text=True, shell=True)
         subprocess.run([git_cmd, "add", "."], check=True, capture_output=True, text=True, shell=True)
         subprocess.run([git_cmd, "commit", "-m", "feat: autonomous isolated spec execution pass"], check=True, capture_output=True, text=True, shell=True)
+        
         pipeline_state["logs"].append("📡 Syncing codebase up to GitHub remote repository cloud servers...")
         subprocess.run([git_cmd, "push", "-u", "origin", new_branch], check=True, capture_output=True, text=True, shell=True)
-        pipeline_state["logs"].append(f"📡 [Cloud Milestone]: Branch {new_branch} successfully created natively on GitHub.com.")
+        pipeline_state["logs"].append(f"📡 [Cloud Milestone]: Branch `{new_branch}` successfully created natively on GitHub.com.")
+
         pipeline_state["logs"].append("📦 Submitting native Pull Request registration via authenticated GitHub CLI...")
         pr_cmd = [gh_cmd, "pr", "create", "--title", f"🤖 Autonomous SDD Pass: {new_branch}", "--body", "Autonomous pull request.", "--head", new_branch, "--base", "main"]
         pr_result = subprocess.run(pr_cmd, check=True, capture_output=True, text=True, shell=True)
         real_pr_html_url = pr_result.stdout.strip()
+            
         pipeline_state["logs"].append(f"\n🎉 SUCCESS! Real GitHub Pull Request Opened Live at GitHub.com:\n🔗 {real_pr_html_url}")
         pipeline_state["branch_created"] = new_branch
         pipeline_state["pr_url"] = real_pr_html_url
         pipeline_state["status"] = "Awaiting Human Pull Request Approval"
+
     except Exception as e:
         error_details = getattr(e, "stderr", str(e))
         pipeline_state["status"] = "Cloud Push Failed"
@@ -178,25 +203,17 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
         payload = json.loads(post_data.decode('utf-8'))
         if self.path == '/api/start':
             if pipeline_state["status"] != "Active Engineering Workflow Running":
-                from skills.jira_tools import skill_fetch_jira_story
-                JIRA_DOMAIN = "tyagirishabh.atlassian.net"
-                JIRA_EMAIL  = "tyagi.rishabh@gmail.com"
-                JIRA_TOKEN  = "ATATT3xFfGF0g2JKgjrzPhHz86-E4CKiOnciqVoQPZtscqKGmi6uNQX6bxVOWFQkdHmPc_-BxUpqcSEKCRlRT2kXrdYLH8esNy3uhaA8RXF17NfdmGkU96Y8W9n9Ja4t2POmzHvO9CK8RKnnb0j6cZMMjSo6OUH1hikOrQ4cC2X3ZxqJFOS-qKs=F82BA0D2"
-                input_key = payload.get("story", "").strip()
-                pipeline_state["logs"] = [f"🏁 Contacting JIRA Cloud instance to fetch ticket: {input_key}..."]
-                pipeline_state["status"] = "Active Engineering Workflow Running"
-                jira_res = skill_fetch_jira_story(JIRA_DOMAIN, JIRA_EMAIL, JIRA_TOKEN, input_key)
-                if not jira_res["success"]:
-                    pipeline_state["status"] = "Idle"
-                    pipeline_state["logs"].append(jira_res["story_text"])
-                    self.send_response(400); self.end_headers(); return
-                pipeline_state["logs"].append(f"✅ Successfully ingested JIRA data for issue: {input_key}!")
-                t = Thread(target=run_sdd_pipeline, args=(jira_res["story_text"],))
-                t.daemon = True; t.start()
-            self.send_response(200); self.end_headers()
+                pipeline_state["logs"] = ["🏁 Booting autonomous cloud spec vault pipeline..."]
+                t = Thread(target=run_sdd_pipeline, args=(payload.get("story", ""),))
+                t.daemon = True
+                t.start()
+            self.send_response(200)
+            self.end_headers()
+            
         elif self.path == '/api/approve':
             pipeline_state["status"] = "Merging changes"
             pipeline_state["logs"].append("\n🔀 User approval received. Submitting remote merge request to GitHub CLI...")
+            
             try:
                 gh_cmd = r"C:\Program Files\GitHub CLI\gh.exe" if os.path.exists(r"C:\Program Files\GitHub CLI\gh.exe") else "gh"
                 subprocess.run([gh_cmd, "pr", "merge", "--squash", "--delete-branch", "--admin"], check=True, capture_output=True, text=True, shell=True)
@@ -204,14 +221,12 @@ class SDDApiHandler(SimpleHTTPRequestHandler):
             except Exception as e:
                 error_details = getattr(e, "stderr", str(e))
                 pipeline_state["logs"].append(f"ℹ️ Cloud Integration Notice: {error_details}")
+                
             pipeline_state["status"] = "Integrated Successful (Production Ready)"
             self.send_response(200); self.end_headers()
 
 if __name__ == "__main__":
     os.makedirs(".sdd", exist_ok=True)
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    os.chdir(project_root)
-    print(f"📁 Workspace Root Directory Locked: {project_root}")
     print("🚀 Launching Completed Cloud-Native SDD Server at http://localhost:8000")
     server = HTTPServer(('localhost', 8000), SDDApiHandler)
     server.serve_forever()

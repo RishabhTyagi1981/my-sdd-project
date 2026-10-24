@@ -1,43 +1,49 @@
-# Verification Check File: SDD-1
+# Verification Check Files
 
-## Title Change Verification
+## AC-1: Category Dropdown Menu
+- **Test Case**: Verify that the category dropdown menu is present and contains all expected categories.
+- **Expected Result**: The dropdown menu should display a list of categories.
 
-1. **Open the `index.html` file**:
-   - Ensure that the file is opened in a text editor.
+## AC-2: Filter by Category
+- **Test Case**: Select a category from the dropdown menu and verify that the search results only display products from that category.
+- **Expected Result**: The search results should only show products that belong to the selected category.
 
-2. **Locate the `<title>` tag**:
-   - Search for the `<title>` tag within the `<head>` section of the file.
+## AC-3: Display Search Results in Grid Format
+- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices.
+- **Expected Result**: The search results should be displayed in a grid format.
 
-3. **Verify the Title Text**:
-   - Confirm that the text inside the `<title>` tag is "SDD POC".
+## AC-4: Sort by Relevance, Price, or Popularity
+- **Test Case**: Select a sorting option (relevance, price, or popularity) and verify that the search results are displayed in the selected order.
+- **Expected Result**: The search results should be displayed in the selected order.
 
-4. **Save the Changes**:
-   - Ensure that the changes have been saved to the `index.html` file.
+## AC-5: Price Range Filter
+- **Test Case**: Verify that the price range filter is present and allows users to select a minimum and maximum price.
+- **Expected Result**: The price range filter should allow users to select a minimum and maximum price.
 
-5. **Test the Page in a Web Browser**:
-   - Open the `index.html` file in a web browser.
-   - Verify that the browser tab displays the title "SDD POC".
+## AC-6: Filter by Price Range
+- **Test Case**: Select a price range and verify that the search results only display products within that range.
+- **Expected Result**: The search results should only show products within the selected price range.
 
-6. **Update Documentation**:
-   - Ensure that any relevant documentation or notes have been updated to reflect the change in the page title.
+## AC-7: Display Price Range Filter Options
+- **Test Case**: Verify that the price range filter displays options for selecting a minimum and maximum price.
+- **Expected Result**: The price range filter should display options for selecting a minimum and maximum price.
 
-## Additional Verification
+## AC-8: Display Search Results in Grid Format with Price Range Filter
+- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices when using the price range filter.
+- **Expected Result**: The search results should be displayed in a grid format.
 
-- **No Other Changes**:
-  - Confirm that no other parts of the `index.html` file have been modified.
+## AC-9: Sorting Option
+- **Test Case**: Verify that the sorting option is present and allows users to select a sorting order (relevance, price, or popularity).
+- **Expected Result**: The sorting option should allow users to select a sorting order.
 
-- **No New Bugs or Issues**:
-  - Verify that the change does not introduce any new bugs or issues.
+## AC-10: Display Search Results in Selected Order
+- **Test Case**: Select a sorting option and verify that the search results are displayed in the selected order.
+- **Expected Result**: The search results should be displayed in the selected order.
 
-- **Consistency with Existing Content**:
-  - Ensure that the change is made in a way that is consistent with the rest of the existing content and structure.
+## AC-11: Sorting Options
+- **Test Case**: Verify that the sorting options include relevance, price, and popularity.
+- **Expected Result**: The sorting options should include relevance, price, and popularity.
 
-## Sign-off
-
-- **Developer**: Confirm that the title change has been made and tested.
-- **QA**: Verify that the page title change is reflected correctly in the browser.
-- **Project Manager**: Approve the change and update the project timeline as necessary.
-
-## Notes
-
-- Ensure that the change does not affect any other functionality or styling of the page.
+## AC-12: Display Search Results in Grid Format with Sorting Option
+- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices when using the sorting option.
+- **Expected Result**: The search results should be displayed in a grid format.

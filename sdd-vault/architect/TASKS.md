@@ -1,16 +1,11 @@
 # TASKS.md
 
-## SDD-1: Update the Page Title to SDD POC
-
-### Tasks
-
-- [ ] Open the `index.html` file in a text editor.
-- [ ] Locate the `<title>` tag within the `<head>` section of the file.
-- [ ] Change the text inside the `<title>` tag from "Free Autonomous SDD Workspace Cockpit" to "SDD POC".
-- [ ] Save the changes to the `index.html` file.
-- [ ] Test the page in a web browser to ensure the title change is reflected correctly.
-- [ ] Update any relevant documentation or notes to reflect the change in the page title.
-- [ ] Confirm that the page title change is reflected correctly in the browser.
-- [ ] Approve the change and update the project timeline as necessary.
-- [ ] Ensure that the change does not introduce any new bugs or issues.
-- [ ] The change should be made in a way that is consistent with the rest of the existing content and structure.
+- [ ] Implement a dropdown menu for category selection.
+- [ ] Filter search results based on the selected category.
+- [ ] Display search results in a grid format with product images, names, and prices.
+- [ ] Implement sorting options for relevance, price, and popularity.
+- [ ] Filter search results based on selected sorting options.
+- [ ] Implement a price range filter.
+- [ ] Filter search results based on the selected price range.
+- [ ] Allow users to select a minimum and maximum price for the price range filter.
+- [ ] Ensure that the search results are displayed in a grid format with product images, names, and prices.
