@@ -71,9 +71,9 @@ AGENTS = {
         "system": "Read SPEC.md and break it down into an explicit technical checklist file named TASKS.md. Output clean markdown bullets.",
         "vault_path": "sdd-vault/architect/TASKS.md", "log_path": "sdd-vault/architect/AGENT_LOG.md"
     },
-    "software_engineer": {
+       "software_engineer": {
         "name": "🛠️ Software Engineer Agent",
-        "system": "Write high-quality React or JS components based on specs. Return ONLY raw code blocks. CRITICAL: Never include realistic-looking token strings, mock keys, or strings starting with 'ghp_' or 'secret' in the code to prevent GitHub Push Protection blocks."
+        "system": "You are a Senior Full-Stack Engineer specializing in code modification. You will be provided with an existing file content and a specification sheet. Your job is to surgically update or patch the existing code to satisfy the spec targets without breaking or deleting any surrounding features. Return the ENTIRE modified file contents from line 1 to the end. Do not include loose code fragments, markdown text headers, or conversational introductions."
     },
     "test_case_reviewer": {
         "name": "🧪 Test Case Reviewer Agent",
@@ -137,27 +137,47 @@ def run_sdd_pipeline(jira_story: str):
     spec = ask_agent("user_story_reviewer", jira_story)
     write_to_disk(AGENTS["user_story_reviewer"]["vault_path"], spec)
     
+        # 📐 2. Architect Task Checklist Phase
     tasks = ask_agent("task_decomposer", spec)
     write_to_disk(AGENTS["task_decomposer"]["vault_path"], tasks)
     
-    # 🎯 FIX 1: DYNAMIC FILE TARGET EXTRACTOR
-    # Scrapes the target file location directly out of the Specification or Task list
+    # 🎯 DYNAMIC FILE TARGET EXTRACTOR
     file_match = re.search(r"([a-zA-Z0-9_\-\./]+\.(?:html|js|py|css|json|md))", spec + "\n" + tasks)
     target_file = file_match.group(1) if file_match else "src/components/SettingsPanel.js"
     pipeline_state["logs"].append(f"🎯 [System]: Extracted execution target file path: `{target_file}`")
     
-    # Pass the explicit target file context straight to the Software Engineer Agent
-    engineering_input = f"SPECIFICATION:\n{spec}\n\nTASKS CHECKLIST:\n{tasks}\n\nCRITICAL TARGET FILE: Write complete file contents for: {target_file}"
+    # 🛡️ FIX: SELF-HEALING CONTEXT ACQUISITION
+    # Check if the file already exists on your hard drive. If yes, load it as baseline context
+    base_dir = Path(__file__).resolve().parent.parent
+    absolute_target = base_dir / target_file
+    
+    existing_file_context = ""
+    if absolute_target.exists():
+        with open(absolute_target, "r", encoding="utf-8") as f:
+            existing_file_context = f.read()
+        pipeline_state["logs"].append(f"📖 [System]: Loaded existing `{target_file}` file into memory buffer context...")
+    else:
+        pipeline_state["logs"].append(f"📝 [System]: `{target_file}` is a brand new file path node. Initializing clear blueprint...")
+
+    # Pass BOTH the spec rules and the current active file context into the model
+    engineering_input = (
+        f"--- IMMUTABLE SPECIFICATION REQUIREMENTS ---\n{spec}\n\n"
+        f"--- ACTIVE TASKS BLUEPRINT ---\n{tasks}\n\n"
+        f"--- EXISTING CODE CURRENTLY ON DISK (MODIFY THIS) ---\n{existing_file_context if existing_file_context else '// Empty baseline'}\n\n"
+        f"CRITICAL TARGET DIRECTION: Modify the existing code above to fulfill the specification targets. Return the full patched file content from top to bottom."
+    )
+    
+    # Invoke the developer agent to process the modification
     code_content = ask_agent("software_engineer", engineering_input)
     
     pipeline_state["logs"].append("⚡ [System]: Invoking Skill: `skill_lint_syntax_check`...")
     lint_results = skill_lint_syntax_check(code_content)
     pipeline_state["logs"].append(f"📋 [Skill Output]: Lint status - {lint_results['message']}")
     
-    # WRITE THE CODE TO THE DYNAMIC TARGET FILE (e.g., index.html) INSTEAD OF THE HARDCODED REACTION COMPONENT
+    # Safely overwrite the target with the fully updated file content
     write_to_disk(target_file, code_content)
-    pipeline_state["logs"].append(f"💾 [Disk Hook]: Successfully populated codebase file: {target_file}")
-    
+    pipeline_state["logs"].append(f"💾 [Disk Hook]: Successfully updated codebase file: {target_file}")
+
     # 🧪 4. Automated Testing Generation Phase (Dynamically maps test name to target file)
     test_file_path = f"tests/test_{Path(target_file).stem}.py" if target_file.endswith('.py') else f"tests/{Path(target_file).stem}.test.js"
     test_content = ask_agent("test_case_reviewer", f"SPECIFICATION:\n{spec}\n\nTARGET FILE MODIFIED: {target_file}\n\nCODE:\n{code_content}")
