@@ -12,7 +12,14 @@ from threading import Thread
 
 PORT = 8000
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "qwen2.5-coder:7b"
+MODEL_NAME = "qwen2.5-coder:1.5b"
+
+# =====================================================================
+# 🔑 SECURITY CONFIGURATION - ENFORCE CLEAN ALPHANUMERIC STRING STRIPS
+# =====================================================================
+GITHUB_TOKEN = "ghp_YOUR_REAL_TOKEN_HERE"
+REPO_OWNER   = "RishabhTyagi1981"
+REPO_NAME    = "my-sdd-project"
 
 # =====================================================================
 # 🔑 SECURITY CONFIGURATION - MAKE SURE THESE ARE ENTIRELY CORRECT
