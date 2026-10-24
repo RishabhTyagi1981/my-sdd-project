@@ -1,49 +1,58 @@
-# Verification Check Files
+```markdown
+# Verification Check File: SDD-1
 
-## AC-1: Category Dropdown Menu
-- **Test Case**: Verify that the category dropdown menu is present and contains all expected categories.
-- **Expected Result**: The dropdown menu should display a list of categories.
+## Description
+This verification check file ensures that the page title in the index.html file is updated to "SDD POC" as per the acceptance criteria.
 
-## AC-2: Filter by Category
-- **Test Case**: Select a category from the dropdown menu and verify that the search results only display products from that category.
-- **Expected Result**: The search results should only show products that belong to the selected category.
+## Acceptance Criteria
 
-## AC-3: Display Search Results in Grid Format
-- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices.
-- **Expected Result**: The search results should be displayed in a grid format.
+- AC-1: The page title in index.html should be updated to "SDD POC".
+- AC-2: The title should be displayed correctly on the webpage.
+- AC-3: The title should be updated immediately after the page loads.
+- AC-4: The title should be updated without any errors or exceptions.
 
-## AC-4: Sort by Relevance, Price, or Popularity
-- **Test Case**: Select a sorting option (relevance, price, or popularity) and verify that the search results are displayed in the selected order.
-- **Expected Result**: The search results should be displayed in the selected order.
+## Verification Steps
 
-## AC-5: Price Range Filter
-- **Test Case**: Verify that the price range filter is present and allows users to select a minimum and maximum price.
-- **Expected Result**: The price range filter should allow users to select a minimum and maximum price.
+1. **Open the index.html file** in a web browser.
+2. **Check the title of the webpage**.
+3. **Verify that the title is "SDD POC"**.
+4. **Check that the title is displayed correctly**.
+5. **Verify that the title is updated immediately after the page loads**.
+6. **Verify that the title is updated without any errors or exceptions**.
 
-## AC-6: Filter by Price Range
-- **Test Case**: Select a price range and verify that the search results only display products within that range.
-- **Expected Result**: The search results should only show products within the selected price range.
+## Expected Results
 
-## AC-7: Display Price Range Filter Options
-- **Test Case**: Verify that the price range filter displays options for selecting a minimum and maximum price.
-- **Expected Result**: The price range filter should display options for selecting a minimum and maximum price.
+- The page title in index.html should be updated to "SDD POC".
+- The title should be displayed correctly on the webpage.
+- The title should be updated immediately after the page loads.
+- The title should be updated without any errors or exceptions.
 
-## AC-8: Display Search Results in Grid Format with Price Range Filter
-- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices when using the price range filter.
-- **Expected Result**: The search results should be displayed in a grid format.
+## Verification Script
 
-## AC-9: Sorting Option
-- **Test Case**: Verify that the sorting option is present and allows users to select a sorting order (relevance, price, or popularity).
-- **Expected Result**: The sorting option should allow users to select a sorting order.
+```bash
+#!/bin/bash
 
-## AC-10: Display Search Results in Selected Order
-- **Test Case**: Select a sorting option and verify that the search results are displayed in the selected order.
-- **Expected Result**: The search results should be displayed in the selected order.
+# Step 1: Open the index.html file in a web browser
+open index.html
 
-## AC-11: Sorting Options
-- **Test Case**: Verify that the sorting options include relevance, price, and popularity.
-- **Expected Result**: The sorting options should include relevance, price, and popularity.
+# Step 2: Check the title of the webpage
+title=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080)
+if [ "$title" -eq 200 ]; then
+    echo "Title is displayed correctly."
+else
+    echo "Title is not displayed correctly."
+fi
 
-## AC-12: Display Search Results in Grid Format with Sorting Option
-- **Test Case**: Verify that the search results are displayed in a grid format with product images, names, and prices when using the sorting option.
-- **Expected Result**: The search results should be displayed in a grid format.
+# Step 3: Verify that the title is updated immediately after the page loads
+sleep 2
+title=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080)
+if [ "$title" -eq 200 ]; then
+    echo "Title is updated immediately after the page loads."
+else
+    echo "Title is not updated immediately after the page loads."
+fi
+
+# Step 4: Verify that the title is updated without any errors or exceptions
+curl -s -o /dev/null -w '%{http_code}' http://localhost:8080
+if [ "$?" -eq 0 ]; then
+    echo "Title
