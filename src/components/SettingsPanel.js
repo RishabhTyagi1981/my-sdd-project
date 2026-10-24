@@ -30,4 +30,3 @@ const SettingsPanel = () => {
 };
 
 export default SettingsPanel;
-
