@@ -1,49 +1,52 @@
-```markdown
-# Verification Check File: SDD-1: Update the page title to SDD POC
+# Verification Check Files
 
-## Description
-This verification check file ensures that the page title in the `index.html` file is updated to "SDD POC" as per the acceptance criteria.
+## Verification Check for AC-1: Dark Mode Toggle Switch
+- **File**: `src/components/SettingsPanel.js`
+- **Check**: Ensure that the `SettingsPanel` component includes a toggle switch with the label "Dark Mode".
+- **Code Snippet**:
+  ```jsx
+  <label>
+    Dark Mode
+    <input
+      type="checkbox"
+      checked={theme === 'dark'}
+      onChange={() => toggleTheme(theme === 'dark' ? 'light' : 'dark')}
+    />
+  </label>
+  ```
+- **Expected Output**: A checkbox labeled "Dark Mode" should be visible inside the `SettingsPanel`.
 
-## Acceptance Criteria
+## Verification Check for AC-2: Persisting Toggle State Locally
+- **File**: `src/components/SettingsPanel.js`
+- **Check**: Ensure that the toggle state is saved in `localStorage` and persists across page reloads.
+- **Code Snippet**:
+  ```jsx
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  ```
+- **Expected Output**: After toggling the switch and refreshing the page, the theme should remain consistent with the last selected state.
 
-- AC-1: The page title in index.html should be updated to "SDD POC".
-- AC-2: The title should be displayed correctly on the webpage.
-- AC-3: The title should be updated immediately after the page loads.
-- AC-4: The title should be updated without any errors or exceptions.
+## Verification Check for AC-3: Dynamic Data Attribute Change
+- **File**: `src/components/SettingsPanel.js`
+- **Check**: Ensure that the `data-theme` attribute of the `html` element changes dynamically without requiring a hard page reload.
+- **Code Snippet**:
+  ```jsx
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+  ```
+- **Expected Output**: The `data-theme` attribute should change immediately upon toggling the switch without reloading the page.
 
-## Verification Steps
-
-1. **Open the `index.html` file** in a web browser.
-2. **Check the page title** to ensure it is "SDD POC".
-3. **Verify that the title is displayed correctly** on the webpage.
-4. **Check that the title is updated immediately after the page loads**.
-5. **Check that the title is updated without any errors or exceptions**.
-
-## Expected Results
-
-- The page title should be "SDD POC".
-- The title should be displayed correctly on the webpage.
-- The title should be updated immediately after the page loads.
-- The title should be updated without any errors or exceptions.
-
-## Verification Script
-
-```javascript
-// JavaScript code to verify the page title
-document.addEventListener('DOMContentLoaded', function() {
-    const titleElement = document.querySelector('h1');
-    const title = titleElement.textContent;
-
-    if (title === 'SDD POC') {
-        console.log('AC-1: The page title is updated to "SDD POC".');
-    } else {
-        console.error('AC-1: The page title is not updated to "SDD POC".');
-    }
-
-    // Additional verification steps can be added here
-});
-```
-
-## Conclusion
-
-The verification check file ensures that the page title in the `index.html` file is updated to "SDD POC" as per the acceptance criteria. The verification script checks the page title and logs the result to the console.
+## Verification Check for AC-4: Automated Test for Toggle Functionality
+- **File**: `tests/test_theme.py`
+- **Check**: Ensure that clicking the toggle triggers the context change.
+- **Code Snippet**:
+  ```python
+  def test_toggle_theme(self):
+      # Simulate clicking the toggle
+      self.settings_panel.toggle_theme()
+      # Check if the context changes accordingly
+      self.assertEqual(self.settings_panel.theme, 'dark')
+  ```
+- **Expected Output**: The test should pass, indicating that the toggle correctly updates the theme context.
