@@ -22,7 +22,19 @@ This verification check file ensures that the webpage title is updated to "Spec 
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121214; color: #e1e1e6; margin: 40px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         textarea { width: 100%; height: 200px; background: #202024; border: 1px solid #323238; color: #fff; padding: 12px; border-radius: 6px; box-sizing: border-box; }
-        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; width: 100%; }
-        button:disabled { background: #29292e; color: #7c7c8a; cursor: not-allowed; }
-        .console { background: #09090a; border: 1px solid #323238; font-family: monospace; padding: 15px; height: 320px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
-        .badge { display: inline-block; padding: 6px 12px; background: #29292e;
+        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 5px; }
+        #startBtn { margin-top: 20px; }
+        #approvalZone { display: none; margin-top: 20px; }
+        #uiPreviewZone { display: none; margin-top: 20px; }
+        #codeViewBlock { display: none; margin-top: 20px; }
+        #appSandbox { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div>
+            <h3>📜 Live Background Pipeline Worker Feed</h3>
+            <div id="console" class="console">Loading connection...</div>
+        </div>
+        <div>
+            <h3
