@@ -162,13 +162,18 @@ def run_sdd_pipeline(jira_story: str):
     # 🛡️ THE DETERMINISTIC UI SAFEGUARD LAYER
     # If the target file is our core index.html file, execute a precise surgical text patch 
     # instead of letting the local LLM regenerate and break the master stylesheet trees.
-    if target_file == "index.html" and "Free Autonomous SDD Workspace Cockpit" in existing_file_context:
-        pipeline_state["logs"].append("⚡ [System Skill]: Executing deterministic string injection patch on index.html...")
+       # 🛡️ THE STRATEGIC TAG-TARGETED UI SAFEGUARD LAYER
+    # This checks for the explicit HTML opening and closing tag blocks on line 18, 
+    # completely preventing the script from accidentally matching the JavaScript nodes below!
+    target_header_string = '<h1 id="main-cockpit-title">Free Autonomous SDD Workspace Cockpit</h1>'
+    
+    if target_file == "index.html" and target_header_string in existing_file_context:
+        pipeline_state["logs"].append("⚡ [System Skill]: Executing absolute HTML tag injection patch on index.html...")
         
-        # Surgically map only the explicit string swap requested by your JIRA card
+        # Surgically replace ONLY the exact HTML header line node match
         code_content = existing_file_context.replace(
-            "Free Autonomous SDD Workspace Cockpit", 
-            "SDD POC"
+            target_header_string, 
+            '<h1 id="main-cockpit-title">SDD POC</h1>'
         )
     else:
         # Fall back to standard AI generation if altering sub-module files or React assets
@@ -179,6 +184,7 @@ def run_sdd_pipeline(jira_story: str):
             f"CRITICAL TARGET DIRECTION: Modify the existing code above to fulfill the specification targets. Return the FULL file content from top to bottom."
         )
         code_content = ask_agent("software_engineer", engineering_input)
+
     
     pipeline_state["logs"].append("⚡ [System]: Invoking Skill: `skill_lint_syntax_check`...")
     lint_results = skill_lint_syntax_check(code_content)
