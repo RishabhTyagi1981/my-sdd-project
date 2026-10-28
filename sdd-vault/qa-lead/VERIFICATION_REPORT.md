@@ -1,49 +1,27 @@
 ```markdown
-# Verification Check File: SDD-1: Update the page title to SDD POC
+# Verification Check File: SDD-1: Update the page title to Spec Driven POC
 
 ## Description
-This verification check file ensures that the page title in the `index.html` file is updated to "SDD POC" as per the acceptance criteria.
+This verification check file ensures that the webpage title is updated to "Spec Driven POC" as per the acceptance criteria.
 
 ## Acceptance Criteria
+- AC-1: The title of the webpage should be updated to "Spec Driven POC".
+- AC-2: The title should be displayed in the `<title>` tag of the HTML document.
+- AC-3: The title should be visible on the webpage.
+- AC-4: The title should be updated when the page is loaded.
 
-- AC-1: The page title in index.html should be updated to "SDD POC".
-- AC-2: The title should be displayed correctly on the webpage.
-- AC-3: The title should be updated immediately after the page loads.
-- AC-4: The title should be updated without any errors or exceptions.
-
-## Verification Steps
-
-1. **Open the `index.html` file** in a web browser.
-2. **Check the page title** to ensure it is "SDD POC".
-3. **Verify that the title is displayed correctly** on the webpage.
-4. **Check that the title is updated immediately after the page loads**.
-5. **Check that the title is updated without any errors or exceptions**.
-
-## Expected Results
-
-- The page title should be "SDD POC".
-- The title should be displayed correctly on the webpage.
-- The title should be updated immediately after the page loads.
-- The title should be updated without any errors or exceptions.
-
-## Verification Script
-
-```javascript
-// JavaScript code to verify the page title
-document.addEventListener('DOMContentLoaded', function() {
-    const titleElement = document.querySelector('h1');
-    const title = titleElement.textContent;
-
-    if (title === 'SDD POC') {
-        console.log('AC-1: The page title is updated to "SDD POC".');
-    } else {
-        console.error('AC-1: The page title is not updated to "SDD POC".');
-    }
-
-    // Additional verification steps can be added here
-});
-```
-
-## Conclusion
-
-The verification check file ensures that the page title in the `index.html` file is updated to "SDD POC" as per the acceptance criteria. The verification script checks the page title and logs the result to the console.
+## Code
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spec Driven POC</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121214; color: #e1e1e6; margin: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        textarea { width: 100%; height: 200px; background: #202024; border: 1px solid #323238; color: #fff; padding: 12px; border-radius: 6px; box-sizing: border-box; }
+        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; width: 100%; }
+        button:disabled { background: #29292e; color: #7c7c8a; cursor: not-allowed; }
+        .console { background: #09090a; border: 1px solid #323238; font-family: monospace; padding: 15px; height: 320px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        .badge { display: inline-block; padding: 6px 12px; background: #29292e;

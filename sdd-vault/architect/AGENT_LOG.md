@@ -1,7 +1,5 @@
 # Audit Log
-```markdown
-- [ ] Update the title in index.html to "SDD POC"
-- [ ] Verify that the title is displayed correctly on the webpage
-- [ ] Ensure that the title is updated immediately after the page loads
-- [ ] Confirm that the title is updated without any errors or exceptions
-```
+- **AC-1**: Update the title of the webpage to "Spec Driven POC" in the `index.html` file.
+- **AC-2**: The title should be displayed in the `<title>` tag of the HTML document.
+- **AC-3**: The title should be visible on the webpage.
+- **AC-4**: The title should be updated when the page is loaded.

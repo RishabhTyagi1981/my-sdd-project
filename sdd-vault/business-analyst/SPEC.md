@@ -1,13 +1,10 @@
-```markdown
-# SDD-1: Update the page title to SDD POC
+# SDD-1: Update the page title to Spec Driven POC
 
 ## Description
-Update “Free Autonomous SDD Workspace Cockpit” to SDD POC in index.html
+Update the title of the webpage to "Spec Driven POC" in the `index.html` file.
 
 ## Acceptance Criteria
-
-- AC-1: The page title in index.html should be updated to "SDD POC".
-- AC-2: The title should be displayed correctly on the webpage.
-- AC-3: The title should be updated immediately after the page loads.
-- AC-4: The title should be updated without any errors or exceptions.
-```
+- AC-1: The title of the webpage should be updated to "Spec Driven POC".
+- AC-2: The title should be displayed in the `<title>` tag of the HTML document.
+- AC-3: The title should be visible on the webpage.
+- AC-4: The title should be updated when the page is loaded.

@@ -5,7 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-class TestUpdatePageTitle(unittest.TestCase):
+class TestSpecDrivenPOC(unittest.TestCase):
+
     def setUp(self):
         self.driver = webdriver.Chrome()
         self.driver.get("file:///path/to/index.html")
@@ -13,24 +14,36 @@ class TestUpdatePageTitle(unittest.TestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def test_update_page_title(self):
-        # AC-1: The page title in index.html should be updated to "SDD POC".
-        expected_title = "SDD POC"
-        actual_title = self.driver.title
-        self.assertEqual(actual_title, expected_title, "The page title should be 'SDD POC'")
+    def test_update_title(self):
+        # AC-1: The title of the webpage should be updated to "Spec Driven POC".
+        title = self.driver.title
+        self.assertEqual(title, "Spec Driven POC", "The title of the webpage should be 'Spec Driven POC'")
 
-        # AC-2: The title should be displayed correctly on the webpage.
-        title_element = self.driver.find_element(By.TAG_NAME, "h1")
-        self.assertEqual(title_element.text, expected_title, "The title should be displayed correctly")
+    def test_title_displayed(self):
+        # AC-2: The title should be displayed in the <title> tag of the HTML document.
+        title_tag = self.driver.find_element(By.TAG_NAME, "title")
+        self.assertEqual(title_tag.text, "Spec Driven POC", "The title should be displayed in the <title> tag")
 
-        # AC-3: The title should be updated immediately after the page loads.
-        # This test is typically handled by the browser's navigation process, so it's not directly testable in a unit test.
+    def test_title_visible(self):
+        # AC-3: The title should be visible on the webpage.
+        title = self.driver.find_element(By.TAG_NAME, "title")
+        self.assertTrue(title.is_displayed(), "The title should be visible on the webpage")
 
-        # AC-4: The title should be updated without any errors or exceptions.
-        # This test is typically handled by the browser's navigation process, so it's not directly testable in a unit test.
+    def test_title_updated(self):
+        # AC-4: The title should be updated when the page is loaded.
+        # This test is typically done by checking the title after the page has loaded.
+        # However, since the title is updated programmatically, we can't directly check it.
+        # Instead, we can check if the title is updated by checking the text of the title tag.
+        title_tag = self.driver.find_element(By.TAG_NAME, "title")
+        initial_title = title_tag.text
+        # Simulate updating the title programmatically
+        # This is a placeholder for the actual code that updates the title
+        # For example, if the title is updated by a JavaScript function, we can use the following code:
+        # self.driver.execute_script("document.title = 'Spec Driven POC'")
+        # After updating the title, we can check if it is updated
+        updated_title = title_tag.text
+        self.assertNotEqual(initial_title, updated_title, "The title should be updated when the page is loaded")
 
 if __name__ == "__main__":
     unittest.main()
 ```
-
-In this solution, we use Selenium to automate the process of navigating to the webpage and verifying the title. The `test_update_page_title` method contains assertions to check the expected title and the presence of the title element on the page. The actual title is retrieved using `self.driver.title`, and the title element is found using `self.driver.find_element(By.TAG_NAME, "h1")`. The `assertEqual` method is used to compare the actual title with the expected title.
