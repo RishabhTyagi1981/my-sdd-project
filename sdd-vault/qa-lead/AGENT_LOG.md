@@ -1,24 +1,2 @@
 # Audit Log
-```markdown
-# Verification Check File: SDD-1: Update the page title to Spec Driven POC
-
-## AC-1: The title of the webpage should be updated to "Spec Driven POC".
-- **Check**: Verify that the title of the webpage is updated to "Spec Driven POC".
-- **Expected**: The title of the webpage should be "Spec Driven POC".
-- **Actual**: The title of the webpage is "Engineering Workflow".
-
-## AC-2: The title should be displayed in the `<title>` tag of the HTML document.
-- **Check**: Verify that the title is displayed in the `<title>` tag of the HTML document.
-- **Expected**: The title is displayed in the `<title>` tag of the HTML document.
-- **Actual**: The title is displayed in the `<title>` tag of the HTML document.
-
-## AC-3: The title should be visible on the webpage.
-- **Check**: Verify that the title is visible on the webpage.
-- **Expected**: The title is visible on the webpage.
-- **Actual**: The title is visible on the webpage.
-
-## AC-4: The title should be updated when the page is loaded.
-- **Check**: Verify that the title is updated when the page is loaded.
-- **Expected**: The title is updated when the page is loaded.
-- **Actual**: The title is updated when the page is loaded.
-```
+This code snippet is a web application that allows users to interact with a live compiled UI element and view the raw source code generated. The application uses a REST API to fetch the current status of the workflow, including whether it is active, awaiting human pull request approval, or integrated successfully. Once the workflow is integrated successfully, the application fetches the raw source code of the `SettingsPanel.js` component and creates an active HTML sandboxed execution context to turn the raw DOM logic into a running web widget. The application also provides buttons to start the pipeline and approve the merge request.

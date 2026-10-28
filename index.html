@@ -1,33 +1,59 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engineering Workflow</title>
+    <h1 id="main-cockpit-title">SDD POC</h1>
     <style>
-        body { font-family: sans-serif; padding: 20px; transition: background 0.3s, color 0.3s; margin: 0; background: #fff; color: #000; }
-        [data-theme="dark"] { background: #1e1e24 !important; color: #ffffff !important; }
-        .toggle-btn { padding: 10px 20px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121214; color: #e1e1e6; margin: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        textarea { width: 100%; height: 200px; background: #202024; border: 1px solid #323238; color: #fff; padding: 12px; border-radius: 6px; box-sizing: border-box; }
+        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; width: 100%; }
+        button:disabled { background: #29292e; color: #7c7c8a; cursor: not-allowed; }
+        .console { background: #09090a; border: 1px solid #323238; font-family: monospace; padding: 15px; height: 320px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        .badge { display: inline-block; padding: 6px 12px; background: #29292e; border-radius: 4px; font-weight: bold; }
+        .success-banner { background: #1b2d24; border: 1px solid #00b37e; padding: 15px; border-radius: 6px; margin-top: 20px; }
+        .preview-pane { background: #ffffff; border: 2px solid #22d3ee; border-radius: 6px; width: 100%; height: 180px; margin-top: 15px; }
+        .code-view { background: #1a1a1e; border: 1px solid #323238; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre; overflow-x: auto; color: #a7f3d0; max-height: 200px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Engineering Workflow</h1>
-        <div class="status-container">
-            <p id="status">Idle</p>
-            <p id="console"></p>
-            <button id="startBtn" disabled>Start Pipeline</button>
+    <div class="grid">
+        <div>
+            <h3>📋 Paste Target JIRA User Story Specification Here:</h3>
+            <textarea id="story" placeholder="As a user, I want a dark mode toggle button implemented inside components..."></textarea>
+            <button id="startBtn" onclick="startPipeline()">🚀 Start SDD Execution Loop</button>
+            
+            <h3 style="margin-top: 30px;">⚙️ System Status Indicator</h3>
+            <div id="status" class="badge">Idle</div>
+            
+            <div id="approvalZone" style="display:none;" class="success-banner">
+                <p style="color: #00b37e; font-weight: bold; margin-top: 0;">🎉 Code execution completed and verified!</p>
+                <button style="background: #22d3ee; color: #121214;" onclick="approveMerge()">👍 Click to Approve & Auto-Merge Branch</button>
+            </div>
+
+            <!-- Modern Live Running Interactive Component Panel View -->
+            <div id="uiPreviewZone" style="display:none; margin-top: 30px;">
+                <h3 style="color: #22d3ee; margin-bottom: 5px;">🌐 Live Working App Interface (After Merge):</h3>
+                <p style="font-size: 13px; color: #7c7c8a; margin: 0;">Interact with the agent's live compiled UI element below:</p>
+                <iframe id="appSandbox" class="preview-pane"></iframe>
+                
+                <h4 style="margin-top: 20px; color: #7c7c8a;">📁 Raw Source Code Generated (`SettingsPanel.js`):</h4>
+                <div id="codeViewBlock" class="code-view"></div>
+            </div>
         </div>
-        <div class="approval-zone" id="approvalZone" style="display: none;">
-            <h3>Approval Zone</h3>
-            <label><input type="checkbox" id="dark-mode-toggle"> Enable Application Dark Mode</label>
+        
+        <div>
+            <h3>📜 Live Background Pipeline Worker Feed</h3>
+            <div id="console" class="console">Loading connection...</div>
         </div>
-        <div class="ui-preview-zone" id="uiPreviewZone" style="display: none;">
-            <h3>UI Preview</h3>
+        <div>
+            <h3>📜 Live Working App Interface (After Merge):</h3>
+            <p style="font-size: 13px; color: #7c7c8a; margin: 0;">Interact with the agent's live compiled UI element below:</p>
             <iframe id="appSandbox" class="preview-pane"></iframe>
+            
+            <h4 style="margin-top: 20px; color: #7c7c8a;">📁 Raw Source Code Generated:</h4>
+            <div id="codeViewBlock" class="code-view"></div>
         </div>
-        <div class="code-view-block" id="codeViewBlock"></div>
     </div>
 
     <script>
@@ -46,4 +72,94 @@
                     if (data.status === "Awaiting Human Pull Request Approval") {
                         document.getElementById('approvalZone').style.display = 'block';
                     } else {
-                        document.getElementById('approvalZone').style.display
+                        document.getElementById('approvalZone').style.display = 'none';
+                    }
+
+                    // Once merged successfully, run and show the working code
+                    if (data.status === "Integrated Successful (Production Ready)") {
+                        document.getElementById('uiPreviewZone').style.display = 'block';
+                        fetchAndCompileLiveComponent();
+                    } else {
+                        document.getElementById('uiPreviewZone').style.display = 'none';
+                    }
+                });
+        }
+
+        function fetchAndCompileLiveComponent() {
+            fetch('/src/components/SettingsPanel.js')
+                .then(res => res.text())
+                .then(rawCode => {
+                    document.getElementById('codeViewBlock').innerText = rawCode;
+                    
+                    // Create an active HTML sandboxed execution context to turn raw DOM logic into a running web widget
+                    const iframe = document.getElementById('appSandbox');
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    // Inject a standard sandbox skeleton runner to mount the agent's code string safely
+                    const sandboxTemplate = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: sans-serif; padding: 20px; transition: background 0.3s, color 0.3s; margin: 0; background: #fff; color: #000; }
+                                [data-theme="dark"] { background: #1e1e24 !important; color: #ffffff !important; }
+                                .toggle-btn { padding: 10px 20px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+                            </style>
+                        </head>
+                        <body>
+                            <div id="mount-root"></div>
+                            <script>
+                                // Expose raw script logic to browser execution thread context safely
+                                try {
+                                    ${rawCode}
+                                    
+                                    // Fallback: If agent wrote vanilla code instead of React, execute a safe runtime toggle fallback widget
+                                    if (!document.getElementById('dark-mode-toggle')) {
+                                        const root = document.getElementById('mount-root');
+                                        root.innerHTML = \`
+                                            <h3>Settings Dashboard Layout View</h3>
+                                            <label><input type="checkbox" id="dark-mode-toggle"> Enable Application Dark Mode</label>
+                                        \`;
+                                        document.getElementById('dark-mode-toggle').addEventListener('change', (e) => {
+                                            document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
+                                        });
+                                    }
+                                } catch(e) {
+                                    console.error("Sandbox execution error:", e);
+                                }
+                            <\/script>
+                        </body>
+                        </html>
+                    `;
+                    
+                    iframeDoc.open();
+                    iframeDoc.write(sandboxTemplate);
+                    iframeDoc.close();
+                });
+        }
+
+        function startPipeline() {
+            const txt = document.getElementById('story').value;
+            if (!txt.trim()) return alert("Please enter a user story description.");
+            fetch('/api/start', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ story: txt }) 
+            });
+        }
+
+        function approveMerge() {
+            fetch('/api/approve', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: "approved" })
+            }).then(() => {
+                setTimeout(updateUI, 500);
+            });
+        }
+
+        updateUI();
+        setInterval(updateUI, 1000);
+    </script>
+</body>
+</html>

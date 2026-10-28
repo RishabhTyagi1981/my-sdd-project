@@ -167,16 +167,27 @@ def run_sdd_pipeline(jira_story: str):
     # completely preventing the script from accidentally matching the JavaScript nodes below!
     target_header_string = '<h1 id="main-cockpit-title">Free Autonomous SDD Workspace Cockpit</h1>'
     
-    if target_file == "index.html" and target_header_string in existing_file_context:
-        pipeline_state["logs"].append("⚡ [System Skill]: Executing absolute HTML tag injection patch on index.html...")
+       # 🛡️ THE BULLETPROOF REGEX TITLE INTEGRATOR
+    # This searches for ANY configuration of the h1 element with main-cockpit-title 
+    # and swaps only the text node inside, completely isolating your scripts from the model.
+    if target_file == "index.html" and "main-cockpit-title" in existing_file_context:
+        pipeline_state["logs"].append("⚡ [System Skill]: Executing structural regex title patch on index.html...")
         
-        # Surgically replace ONLY the exact HTML header line node match
-        code_content = existing_file_context.replace(
-            target_header_string, 
-            '<h1 id="main-cockpit-title">SDD POC</h1>'
+        # This matches the h1 tag, its attributes, the old title text, and the closing h1 tag
+        patched_code = re.sub(
+            r'(<h1 id="main-cockpit-title"[^>]*>)(.*?)(</h1>)',
+            r'\1SDD POC\3',
+            existing_file_context
         )
+        
+        # If the file structure is correct, lock it into the output buffer variable
+        if patched_code and len(patched_code) > len(existing_file_context) - 100:
+            code_content = patched_code
+        else:
+            pipeline_state["logs"].append("⚠️ Regex structural guard failed. Using existing context file buffer...")
+            code_content = existing_file_context
     else:
-        # Fall back to standard AI generation if altering sub-module files or React assets
+        # Fall back to standard AI generation if altering React components or standalone assets
         engineering_input = (
             f"--- IMMUTABLE SPECIFICATION REQUIREMENTS ---\n{spec}\n\n"
             f"--- ACTIVE TASKS BLUEPRINT ---\n{tasks}\n\n"
@@ -184,7 +195,6 @@ def run_sdd_pipeline(jira_story: str):
             f"CRITICAL TARGET DIRECTION: Modify the existing code above to fulfill the specification targets. Return the FULL file content from top to bottom."
         )
         code_content = ask_agent("software_engineer", engineering_input)
-
     
     pipeline_state["logs"].append("⚡ [System]: Invoking Skill: `skill_lint_syntax_check`...")
     lint_results = skill_lint_syntax_check(code_content)
