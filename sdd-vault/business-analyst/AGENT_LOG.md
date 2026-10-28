@@ -1,11 +1,14 @@
 # Audit Log
-# SDD-1: Update the page title to Spec Driven POC
+```markdown
+# SDD-2: Update the page title to Spec Driven Development
 
 ## Description
-Update the title of the webpage to "Spec Driven POC" in the `index.html` file.
+Update “Free Autonomous SDD Workspace Cockpit” to Spec Driven Development in index.html
 
 ## Acceptance Criteria
-- AC-1: The title of the webpage should be updated to "Spec Driven POC".
-- AC-2: The title should be displayed in the `<title>` tag of the HTML document.
-- AC-3: The title should be visible on the webpage.
-- AC-4: The title should be updated when the page is loaded.
+
+- AC-1: The page title in index.html should be updated to "Spec Driven Development".
+- AC-2: The title should be displayed as "Spec Driven Development" in the browser tab.
+- AC-3: The title should be displayed as "Spec Driven Development" in the browser window.
+- AC-4: The title should be displayed as "Spec Driven Development" in the browser's title bar.
+```

@@ -1,4 +1,6 @@
-- **AC-1**: Update the title of the webpage to "Spec Driven POC" in the `index.html` file.
-- **AC-2**: The title should be displayed in the `<title>` tag of the HTML document.
-- **AC-3**: The title should be visible on the webpage.
-- **AC-4**: The title should be updated when the page is loaded.
+```markdown
+- [ ] Update the title of the page in index.html to "Spec Driven Development".
+- [ ] Verify that the title is displayed as "Spec Driven Development" in the browser tab.
+- [ ] Confirm that the title is displayed as "Spec Driven Development" in the browser window.
+- [ ] Ensure that the title is displayed as "Spec Driven Development" in the browser's title bar.
+```
