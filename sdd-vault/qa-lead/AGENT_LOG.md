@@ -1,53 +1,40 @@
 # Audit Log
-# Verification Check Files
+```markdown
+# Verification Check File: SDD-1: Update the page title to Spec Driven POC
 
-## Verification Check for AC-1: Dark Mode Toggle Switch
-- **File**: `src/components/SettingsPanel.js`
-- **Check**: Ensure that the `SettingsPanel` component includes a toggle switch with the label "Dark Mode".
-- **Code Snippet**:
-  ```jsx
-  <label>
-    Dark Mode
-    <input
-      type="checkbox"
-      checked={theme === 'dark'}
-      onChange={() => toggleTheme(theme === 'dark' ? 'light' : 'dark')}
-    />
-  </label>
-  ```
-- **Expected Output**: A checkbox labeled "Dark Mode" should be visible inside the `SettingsPanel`.
+## Description
+This verification check file ensures that the webpage title is updated to "Spec Driven POC" as per the acceptance criteria.
 
-## Verification Check for AC-2: Persisting Toggle State Locally
-- **File**: `src/components/SettingsPanel.js`
-- **Check**: Ensure that the toggle state is saved in `localStorage` and persists across page reloads.
-- **Code Snippet**:
-  ```jsx
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-  ```
-- **Expected Output**: After toggling the switch and refreshing the page, the theme should remain consistent with the last selected state.
+## Acceptance Criteria
+- AC-1: The title of the webpage should be updated to "Spec Driven POC".
+- AC-2: The title should be displayed in the `<title>` tag of the HTML document.
+- AC-3: The title should be visible on the webpage.
+- AC-4: The title should be updated when the page is loaded.
 
-## Verification Check for AC-3: Dynamic Data Attribute Change
-- **File**: `src/components/SettingsPanel.js`
-- **Check**: Ensure that the `data-theme` attribute of the `html` element changes dynamically without requiring a hard page reload.
-- **Code Snippet**:
-  ```jsx
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-  ```
-- **Expected Output**: The `data-theme` attribute should change immediately upon toggling the switch without reloading the page.
-
-## Verification Check for AC-4: Automated Test for Toggle Functionality
-- **File**: `tests/test_theme.py`
-- **Check**: Ensure that clicking the toggle triggers the context change.
-- **Code Snippet**:
-  ```python
-  def test_toggle_theme(self):
-      # Simulate clicking the toggle
-      self.settings_panel.toggle_theme()
-      # Check if the context changes accordingly
-      self.assertEqual(self.settings_panel.theme, 'dark')
-  ```
-- **Expected Output**: The test should pass, indicating that the toggle correctly updates the theme context.
+## Code
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spec Driven POC</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121214; color: #e1e1e6; margin: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        textarea { width: 100%; height: 200px; background: #202024; border: 1px solid #323238; color: #fff; padding: 12px; border-radius: 6px; box-sizing: border-box; }
+        button { background: #00b37e; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 5px; }
+        #startBtn { margin-top: 20px; }
+        #approvalZone { display: none; margin-top: 20px; }
+        #uiPreviewZone { display: none; margin-top: 20px; }
+        #codeViewBlock { display: none; margin-top: 20px; }
+        #appSandbox { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div>
+            <h3>📜 Live Background Pipeline Worker Feed</h3>
+            <div id="console" class="console">Loading connection...</div>
+        </div>
+        <div>
+            <h3
