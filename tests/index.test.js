@@ -1,43 +1,48 @@
-```python
-import unittest
-from unittest.mock import patch, Mock
+```javascript
+// Test script block for the acceptance criteria
 
-class TestUpdatePageTitle(unittest.TestCase):
-    @patch('requests.get')
-    def test_update_title(self, mock_get):
-        # Mock the response from the API
-        mock_response = Mock()
-        mock_response.json.return_value = {'status': 'Running', 'logs': ['Log 1', 'Log 2']}
-        mock_get.return_value = mock_response
-
-        # Call the function to update the title
-        updateUI()
-
-        # Assert that the title is updated correctly
-        self.assertEqual(document.getElementById('title').innerText, 'Spec Driven POC')
-
-        # Assert that the console is updated correctly
-        self.assertEqual(document.getElementById('console').innerText, 'Running\nLog 1\nLog 2')
-
-        # Assert that the start button is displayed
-        self.assertTrue(document.getElementById('startBtn').style.display == 'block')
-
-        # Assert that the approval zone is displayed
-        self.assertTrue(document.getElementById('approvalZone').style.display == 'block')
-
-        # Assert that the UI preview zone is displayed
-        self.assertTrue(document.getElementById('uiPreviewZone').style.display == 'block')
-
-        # Assert that the code view block is displayed
-        self.assertTrue(document.getElementById('codeViewBlock').style.display == 'block')
-
-        # Assert that the app sandbox is displayed
-        self.assertTrue(document.getElementById('appSandbox').style.display == 'block')
-
-if __name__ == '__main__':
-    unittest.main()
-```
-// Autonomous SDD Compliance Assertion Mapping Tag: AC-1
+// AC-1: The title of the webpage should be updated to "Spec Driven POC".
+test('AC-1: The title of the webpage should be updated to "Spec Driven POC"', () => {
+    // Arrange
+    const indexHtml = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Engineering Workflow</title>
+            <style>
+                body { font-family: sans-serif; padding: 20px; transition: background 0.3s, color 0.3s; margin: 0; background: #fff; color: #000; }
+                [data-theme="dark"] { background: #1e1e24 !important; color: #ffffff !important; }
+                .toggle-btn { padding: 10px 20px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Engineering Workflow</h1>
+                <div class="status-container">
+                    <p id="status">Idle</p>
+                    <p id="console"></p>
+                    <button id="startBtn" disabled>Start Pipeline</button>
+                </div>
+                <div class="approval-zone" id="approvalZone" style="display: none;">
+                    <h3>Approval Zone</h3>
+                    <label><input type="checkbox" id="dark-mode-toggle"> Enable Application Dark Mode</label>
+                </div>
+                <div class="ui-preview-zone" id="uiPreviewZone" style="display: none;">
+                    <h3>UI Preview</h3>
+                    <iframe id="appSandbox" class="preview-pane"></iframe>
+                </div>
+                <div class="code-view-block" id="codeViewBlock"></div>
+            </div>
+        </body>
+        <script>
+            function updateUI() {
+                fetch('/api/status')
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('status').innerText = data.status;
+                        document.getElementById('console').innerText = data.logs.join('\n');
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-2
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-3
 // Autonomous SDD Compliance Assertion Mapping Tag: AC-4
