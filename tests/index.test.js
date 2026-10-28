@@ -32,18 +32,14 @@ class TestSpecDrivenPOC(unittest.TestCase):
     def test_title_updated(self):
         # AC-4: The title should be updated when the page is loaded.
         # This test is typically done by checking the title after the page has loaded.
-        # However, since the title is updated programmatically, we can't directly check it.
-        # Instead, we can check if the title is updated by checking the text of the title tag.
-        title_tag = self.driver.find_element(By.TAG_NAME, "title")
-        initial_title = title_tag.text
-        # Simulate updating the title programmatically
-        # This is a placeholder for the actual code that updates the title
-        # For example, if the title is updated by a JavaScript function, we can use the following code:
-        # self.driver.execute_script("document.title = 'Spec Driven POC'")
-        # After updating the title, we can check if it is updated
-        updated_title = title_tag.text
-        self.assertNotEqual(initial_title, updated_title, "The title should be updated when the page is loaded")
+        # However, since we are using Selenium, we can't directly check the title after the page has loaded.
+        # Instead, we can use a WebDriverWait to wait for the title to change.
+        WebDriverWait(self.driver, 10).until(EC.title_contains("Spec Driven POC"))
+        new_title = self.driver.title
+        self.assertEqual(new_title, "Spec Driven POC", "The title should be updated to 'Spec Driven POC'")
 
 if __name__ == "__main__":
     unittest.main()
 ```
+
+In this solution, we create a unit test class `TestSpecDrivenPOC` that inherits from `unittest.TestCase`. We define methods for each acceptance criteria, such as `test_update_title`, `test_title_displayed`, `test_title_visible`, and `test_title_updated`. Each method uses Selenium to interact with the webpage and assert the expected behavior. The `setUp` method initializes the webdriver and navigates to the `index.html` file, and
